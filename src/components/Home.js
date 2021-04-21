@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -19,6 +20,7 @@ import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
 
 import DialogComponent from './DialogComponent';
+import TenantDashboard from './TenantDashboard';
 
 
 function Copyright() {
@@ -74,6 +76,9 @@ const styles = theme => ({
     marginBottom: theme.spacing(2),
     display: 'flex',
     justifyContent: 'space-between'
+  },
+  nameChip: {
+    marginRight: theme.spacing(1)
   }
 });
 
@@ -82,28 +87,30 @@ class Home extends Component {
     open: false,
     openDialog: false,
     dialogType: '',
-    selectedPayment: {}
+    selectedTenant: {},
+    showTenantHistory: false
   }
 
 
   handleDialogOpen = (type) => {
     this.setState({ openDialog: true, dialogType: type });
   }
+
   handleDialogClose = () => {
     this.setState({ openDialog: false, dialogType: '' });
   }
 
-  handleSelectedPayment = (paymentObjID) => {
-    const { payment } = this.props;
-
-    // let paymentObj = payment.filter(_ => _.id === paymentObjID);
+  showTenant = (tenantId) => {
+    const { tenants } = this.props;
+    const tenantObj = tenants.filter(_ => _.id === tenantId)[0];
+    this.setState({ selectedTenant: tenantObj, showTenantHistory: true });
   }
 
-
   render() {
-    const { classes, payment, tenants } = this.props;
-    const { openDialog, dialogType } = this.state;
+    const { classes, tenants } = this.props;
+    const { openDialog, dialogType, showTenantHistory, selectedTenant } = this.state;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -112,44 +119,13 @@ class Home extends Component {
 
           <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={3}>
-              <Grid item xs={4} md={4} lg={4}>
-                <Paper className={clsx(classes.contentCenter, fixedHeightPaper)}>
-                  <Typography variant="body2">
-                    No of Tenants:
-                  </Typography>
-                  <Typography variant="h4">
-                    1
-                  </Typography>
-                </Paper>
-              </Grid>
 
-              <Grid item xs={4} md={4} lg={4}>
-                <Paper className={clsx(classes.contentCenter, fixedHeightPaper)}>
-                  <Typography variant="body2">
-                    No of Rooms:
-                  </Typography>
-                  <Typography variant="h4">
-                    1
-                  </Typography>
-                </Paper>
-              </Grid>
-
-              <Grid item xs={4} md={4} lg={4}>
-                <Paper className={clsx(classes.contentCenter, fixedHeightPaper)}>
-                  <Typography variant="body2">
-                    No of Persons living:
-                  </Typography>
-                  <Typography variant="h4">
-                    3
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={12} lg={12}>
+              <Grid item xs={12} md={6} lg={6}>
                 <Paper className={classes.paper}>
 
                   <Grid container spacing={3}>
 
-                    <Grid xs={12} md={12} lg={12}>
+                    <Grid item xs={12} md={12} lg={12}>
                       <div className={classes.titleWithBtn}>
                         <Typography variant="h6">
                           Current Tenants:
@@ -167,22 +143,43 @@ class Home extends Component {
                       </div>
                     </Grid>
 
-                    <Grid xs={12} md={4} lg={4}>
-                      <Chip
-                        icon={<AccountCircleIcon />}
-                        label="Primary clickable"
-                        clickable
-                        color="primary"
-                      // onDelete={handleDelete}
-                      />
+                    <Grid item xs={12} md={12} lg={12}>
+                      {
+                        tenants && tenants.map(tenant => {
+                          return <Chip
+                            key={tenant.id}
+                            icon={<AccountCircleIcon />}
+                            label={tenant.name}
+                            clickable
+                            color="primary"
+                            className={classes.nameChip}
+                            variant="outlined"
+                            onClick={() => this.showTenant(tenant.id)}
+                          />
+                        })
+                      }
                     </Grid>
-
                   </Grid>
-
-
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={6} lg={6}>
+                <Paper className={classes.paper}>
+                  <Typography variant="body2">
+                    Latest:
+                  </Typography>
+                  <Typography variant="h4">
+                    1
+                  </Typography>
                 </Paper>
               </Grid>
 
+              <Grid item xs={12} md={8} lg={8}>
+                {
+                  showTenantHistory ? (
+                    <TenantDashboard selectedTenant={selectedTenant} />
+                  ) : <></>
+                }
+              </Grid>
 
             </Grid>
 
@@ -197,14 +194,14 @@ class Home extends Component {
                 <DialogComponent
                   openDialog={openDialog}
                   handleDialogClose={this.handleDialogClose}
-                  title={"Add Payment"}
+                  title={dialogType === "payment" ? "Add Payment" : "Add Tenant"}
                   dialogType={dialogType}
                 />
               ) : <></>
             }
           </Container>
         </main>
-      </div>
+      </div >
     );
   }
 
@@ -213,7 +210,6 @@ class Home extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    payment: state.firestore.ordered.payment,
     tenants: state.firestore.ordered.tenants
   }
 }
@@ -223,7 +219,6 @@ export default withStyles(styles, { withTheme: true })(
   compose(
     connect(mapStateToProps),
     firestoreConnect([
-      { collection: 'payment' },
       { collection: 'tenants' }
     ])
   )(Home)

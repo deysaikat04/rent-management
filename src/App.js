@@ -10,8 +10,8 @@ function App() {
 
       <Navbar />
       <Switch>
-        <Route exact path='/' render={() => <Home />} />
-        <Route exact path='/tenant' render={() => <TenantDashboard />} />
+        <Route exact path='/' render={(props) => <Home {...props} />} />
+        <Route exact path='/tenant/:id' render={(props) => <TenantDashboard {...props} />} />
 
       </Switch>
     </BrowserRouter>

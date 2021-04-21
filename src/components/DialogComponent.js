@@ -9,8 +9,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-
+import moment from 'moment';
 import PaymentForm from './PaymentForm';
+import AddTenant from './AddTenant';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -50,24 +52,17 @@ class DialogComponent extends Component {
             >
                 <DialogTitle id="alert-dialog-title">
                     {title}
+                    <Typography variant="body2">{moment().format('DD-MMMM-YYYY').toString()}</Typography>
                     <IconButton aria-label="close" className={classes.closeButton} onClick={handleDialogClose}>
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
                     {
-                        dialogType === 'payment' ? <PaymentForm /> : <></>
+                        dialogType === 'payment' ? <PaymentForm handleDialogClose={handleDialogClose} /> : <AddTenant handleDialogClose={handleDialogClose} />
                     }
 
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDialogClose} color="primary">
-                        Disagree
-          </Button>
-                    <Button onClick={handleDialogClose} color="primary">
-                        Agree
-          </Button>
-                </DialogActions>
             </Dialog >
         );
     }
