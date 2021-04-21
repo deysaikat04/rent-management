@@ -130,6 +130,7 @@ class Home extends Component {
                         </IconButton>
                         <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                             {!open ? 'RentKhata' : ''}
+                            {/* {process.env.REACT_APP_NAME} */}
                         </Typography>
                         <Link to={'/tenant'}>
                             <Typography component="h1" variant="h6" color="inherit">

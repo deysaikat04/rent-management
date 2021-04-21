@@ -53,6 +53,10 @@ class TenantDashboard extends Component {
     selectedPayment: {}
   }
 
+  componentDidMount = () => {
+    const id = this.props.match.params ? this.props.match.params.id : '';
+  }
+
   handleDialogOpen = () => {
     this.setState({ openDialog: true });
   }
@@ -61,7 +65,7 @@ class TenantDashboard extends Component {
   }
 
   handleSelectedPayment = (paymentObjID) => {
-    const { payment} = this.props;
+    const { payment } = this.props;
     console.log(paymentObjID);
     let paymentObj = payment.filter(_ => _.id === paymentObjID);
     console.log(paymentObj);
@@ -80,32 +84,18 @@ class TenantDashboard extends Component {
 
           <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={3}>
-            <Grid item xs={12} md={8} lg={8}>
-              <PaymentHistory payment={payment} handleSelectedPayment={this.handleSelectedPayment} />
-            </Grid>
-
-              <Grid item xs={12} md={4} lg={4}>
-                <Paper className={fixedHeightPaper}>
-                  {/* <Deposits /> */}
-                  {
-                    tenants && tenants.length ? (
-                      <div>{tenants[0].name}</div>
-                    ) : (
-                      <Typography>You don't have any tenant right now.</Typography>
-                    )
-                  }
-                </Paper>
+              <Grid item xs={12} md={8} lg={8}>
+                <PaymentHistory payment={payment} handleSelectedPayment={this.handleSelectedPayment} />
               </Grid>
-             
 
             </Grid>
 
-            <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={this.handleDialogOpen}>
+            {/* <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={this.handleDialogOpen}>
               <AddIcon />
             </Fab>
             {
               openDialog ? <PaymentForm openDialog={openDialog} handleDialogClose={this.handleDialogClose} /> : <></>
-            }
+            } */}
           </Container>
         </main>
       </div>
@@ -123,12 +113,4 @@ const mapStateToProps = (state) => {
 }
 
 
-export default withStyles(styles, { withTheme: true })(
-  compose(
-    connect(mapStateToProps),
-    firestoreConnect([
-      { collection: 'payment' },
-      { collection: 'tenants' }
-    ])
-  )(TenantDashboard)
-);
+export default withStyles(styles, { withTheme: true })(TenantDashboard);

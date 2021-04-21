@@ -1,17 +1,18 @@
-export const addPayment = (paymentObj, tenantId) => {
+export const addTenant = (tenant) => {
+
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         //make async calls to DB
         const firestore = getFirestore();
         const profile = getState().firebase.profile;
-
-        firestore.collection('tenants').doc(tenantId).update({
-            payments: { ...paymentObj },
+        firestore.collection('tenants').add({
+            ...tenant,
             toc: new Date()
         }).then(() => {
-            dispatch({ type: 'ADD_PAYMENT', payment: paymentObj });
+            dispatch({ type: 'ADD_TENANT', tenant });
         }).catch((err) => {
-            dispatch({ type: 'ADD_PAYMENT_ERROR', err });
+            dispatch({ type: 'ADD_TENANT_ERROR', err });
         });
+
     }
 };
 
