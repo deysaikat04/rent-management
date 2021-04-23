@@ -39,6 +39,8 @@ class AddTenant extends Component {
                 name: '',
                 address: '',
                 adhaarNo: '',
+                mobileNo: '',
+                mobileNoSecond: '',
                 fromDate: '',
                 tenure: '',
                 toDate: '',
@@ -54,27 +56,39 @@ class AddTenant extends Component {
     handleChange = (event) => {
         const { name, value, type } = event.target;
         this.setState({
-            form: { ...this.state.form, [name]: type === 'number' ? parseInt(value) : value }
+            form: {
+                ...this.state.form,
+                [name]: type === 'number' ? parseInt(value) : type === 'date' ? moment(value).format('DD-MMMM-YYYY') : value
+            }
+        });
+    }
+
+    handleAdhaarChange = (event) => {
+        const { name, value } = event.target;
+        let newNumber = value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 ');
+        this.setState({
+            form: {
+                ...this.state.form,
+                [name]: newNumber
+            }
         });
     }
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let toDate = moment().add(this.state.form.tenure, 'months').format("YYYY-DD-MM").toString();
+        let toDate = moment().add(this.state.form.tenure, 'months').format("DD-MMMM-YYYY").toString();
         this.setState({
             form: { ...this.state.form, toDate }
         }, () => {
             this.props.handleDialogClose();
             this.props.addTenant(this.state.form);
         })
-
     }
-
-
 
     render() {
         const { classes, handleDialogClose } = this.props;
-        const { name, address, adhaarNo, fromDate, tenure, rentAmount, chargePerUnit, startingUnit, advancedAmount } = this.state.form;
+        const { name, address, adhaarNo, fromDate, tenure, rentAmount, chargePerUnit, startingUnit, advancedAmount,
+            mobileNoSecond, mobileNo } = this.state.form;
         return (
             <form onSubmit={this.handleSubmit}>
                 <Grid container spacing={2}>
@@ -91,12 +105,11 @@ class AddTenant extends Component {
                             onChange={this.handleChange}
                             fullWidth
                             required
-                        // {...(error.amount && { error: true, helperText: 'This field is required.' })}
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={6}>
                         <TextField
-                            type="number"
+                            // type="number"
                             color="secondary"
                             variant="standard"
                             margin="dense"
@@ -104,9 +117,8 @@ class AddTenant extends Component {
                             name="adhaarNo"
                             label="Adhaar No."
                             value={adhaarNo}
-                            onChange={this.handleChange}
+                            onChange={this.handleAdhaarChange}
                             fullWidth
-                        // {...(error.amount && { error: true, helperText: 'This field is required.' })}
                         />
                     </Grid>
                     <Grid item xs={12} md={12} lg={12}>
@@ -122,6 +134,41 @@ class AddTenant extends Component {
                             fullWidth
                             multiline
                             rows={2}
+                        />
+                    </Grid>
+                    <Grid item xs={6} md={6} lg={6}>
+                        <TextField
+                            type="number"
+                            color="secondary"
+                            variant="standard"
+                            margin="dense"
+                            id="mobileNo"
+                            name="mobileNo"
+                            label="Mobile No"
+                            value={mobileNo}
+                            onChange={this.handleChange}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                            }}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6} md={6} lg={6}>
+                        <TextField
+                            type="number"
+                            color="secondary"
+                            variant="standard"
+                            margin="dense"
+                            id="mobileNoSecond"
+                            name="mobileNoSecond"
+                            label="Mobile No #2"
+                            value={mobileNoSecond}
+                            onChange={this.handleChange}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                            }}
+                            fullWidth
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -152,8 +199,8 @@ class AddTenant extends Component {
                             onChange={this.handleChange}
                             InputLabelProps={{ shrink: true }}
                             helperText={
-                                fromDate && tenure ? `Contract end date ${moment().add(tenure, 'months').format("YYYY-DD-MM")}`
-                                    : 'Please enter value for Contract end date'
+                                fromDate && tenure ? `Contract end date ${moment().add(tenure, 'months').format("DD-MMMM-YYYY")}`
+                                    : 'Please enter the duration to get Contract end date'
                             }
                             fullWidth
                         />
