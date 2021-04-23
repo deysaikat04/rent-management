@@ -63,6 +63,19 @@ class AddTenant extends Component {
         });
     }
 
+    handleMobileChange = (event) => {
+        const { name, value } = event.target;
+        if (value.toString().length <= 10) {
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    [name]: value
+                }
+            });
+        }
+
+    }
+
     handleAdhaarChange = (event) => {
         const { name, value } = event.target;
         let newNumber = value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 ');
@@ -146,7 +159,7 @@ class AddTenant extends Component {
                             name="mobileNo"
                             label="Mobile No"
                             value={mobileNo}
-                            onChange={this.handleChange}
+                            onChange={this.handleMobileChange}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                             }}
@@ -164,7 +177,7 @@ class AddTenant extends Component {
                             name="mobileNoSecond"
                             label="Mobile No #2"
                             value={mobileNoSecond}
-                            onChange={this.handleChange}
+                            onChange={this.handleMobileChange}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">+91</InputAdornment>,
                             }}

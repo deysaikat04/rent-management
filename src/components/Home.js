@@ -133,7 +133,7 @@ class Home extends Component {
           <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={3}>
 
-              <Grid item xs={12} md={6} lg={6}>
+              <Grid item xs={12} md={12} lg={12}>
                 <Paper className={classes.paper}>
 
                   <Grid container spacing={3}>
@@ -173,17 +173,6 @@ class Home extends Component {
                       }
                     </Grid>
                   </Grid>
-                </Paper>
-              </Grid>
-
-              <Grid item xs={12} md={6} lg={6}>
-                <Paper className={classes.paper}>
-                  <Typography variant="body2">
-                    Latest:
-                  </Typography>
-                  <Typography variant="h4">
-                    1
-                  </Typography>
                 </Paper>
               </Grid>
 
