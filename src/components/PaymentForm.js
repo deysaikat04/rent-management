@@ -88,7 +88,7 @@ class PaymentDialog extends Component {
 
         this.setState({
             tenantId,
-            form: { ...this.state.form, rentAmount: tenantObj.rentAmount },
+            form: { ...this.state.form, rentAmount: tenantObj.rentAmount, prevUnit: startingUnit },
             chargePerUnit: tenantObj.chargePerUnit,
             startingUnit,
             prevPayments
@@ -120,7 +120,6 @@ class PaymentDialog extends Component {
             form: {
                 ...this.state.form,
                 [name]: Number(value),
-                prevUnit: Number(value),
                 unitConsumed,
                 electricBill,
                 total
@@ -174,7 +173,6 @@ class PaymentDialog extends Component {
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">₹</InputAdornment>,
                             }}
-                        // {...(error.amount && { error: true, helperText: 'This field is required.' })}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -202,7 +200,6 @@ class PaymentDialog extends Component {
                             value={currentUnit}
                             onChange={this.handleUnitChange}
                             fullWidth
-                        // {...(error.amount && { error: true, helperText: 'This field is required.' })}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>

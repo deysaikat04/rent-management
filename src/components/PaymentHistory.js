@@ -67,8 +67,11 @@ function stableSort(array, comparator) {
 
 const headCells = [
     { id: 'monthName', numeric: false, disablePadding: true, label: 'Month' },
+    { id: 'prevUnit', numeric: true, disablePadding: false, label: 'Previous Unit' },
     { id: 'currentUnit', numeric: true, disablePadding: false, label: 'Current Unit' },
     { id: 'unitConsumed', numeric: true, disablePadding: false, label: 'Unit Consumed' },
+    { id: 'electricBill', numeric: true, disablePadding: false, label: 'Electric Bill' },
+    { id: 'rentAmount', numeric: true, disablePadding: false, label: 'Rent' },
     { id: 'total', numeric: true, disablePadding: false, label: 'Total (₹)' }
 ];
 
@@ -315,8 +318,11 @@ export default function PaymentHistory(props) {
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {row.monthName}
                                             </TableCell>
+                                            <TableCell align="right">{row.prevUnit}</TableCell>
                                             <TableCell align="right">{row.currentUnit}</TableCell>
                                             <TableCell align="right">{row.unitConsumed}</TableCell>
+                                            <TableCell align="right">{row.electricBill}</TableCell>
+                                            <TableCell align="right">{row.rentAmount}</TableCell>
                                             <TableCell align="right">{row.total}</TableCell>
                                             {/* <TableCell align="right">{row.protein}</TableCell> */}
                                         </TableRow>
