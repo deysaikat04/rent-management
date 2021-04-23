@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -132,11 +131,7 @@ class Home extends Component {
                             {!open ? 'RentKhata' : ''}
                             {/* {process.env.REACT_APP_NAME} */}
                         </Typography>
-                        <Link to={'/tenant'}>
-                            <Typography component="h1" variant="h6" color="inherit">
-                                Tenant
-                        </Typography>
-                        </Link>
+
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
                                 <NotificationsIcon />

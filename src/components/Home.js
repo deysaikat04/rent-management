@@ -78,7 +78,14 @@ const styles = theme => ({
     justifyContent: 'space-between'
   },
   nameChip: {
-    marginRight: theme.spacing(1)
+    margin: theme.spacing(1),
+    border: '1px solid #aeb7e6'
+  },
+  nameChipSelected: {
+    margin: theme.spacing(1),
+    // backgroundColor: '#e9ecff  !important',
+    // boxShadow: '0px 2px 8px 4px #d5d8ea',
+    border: '1px solid #3f51b5'
   }
 });
 
@@ -88,7 +95,8 @@ class Home extends Component {
     openDialog: false,
     dialogType: '',
     selectedTenant: {},
-    showTenantHistory: false
+    showTenantHistory: false,
+    paymentArray: []
   }
 
 
@@ -102,13 +110,18 @@ class Home extends Component {
 
   showTenant = (tenantId) => {
     const { tenants } = this.props;
+    let paymentArray = [];
     const tenantObj = tenants.filter(_ => _.id === tenantId)[0];
-    this.setState({ selectedTenant: tenantObj, showTenantHistory: true });
+
+    for (let index in tenantObj.payments) {
+      paymentArray.push(tenantObj.payments[index]);
+    }
+    this.setState({ selectedTenant: tenantObj, showTenantHistory: true, paymentArray });
   }
 
   render() {
     const { classes, tenants } = this.props;
-    const { openDialog, dialogType, showTenantHistory, selectedTenant } = this.state;
+    const { openDialog, dialogType, showTenantHistory, selectedTenant, paymentArray } = this.state;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
@@ -152,7 +165,7 @@ class Home extends Component {
                             label={tenant.name}
                             clickable
                             color="primary"
-                            className={classes.nameChip}
+                            className={selectedTenant.id === tenant.id ? classes.nameChipSelected : classes.nameChip}
                             variant="outlined"
                             onClick={() => this.showTenant(tenant.id)}
                           />
@@ -162,6 +175,7 @@ class Home extends Component {
                   </Grid>
                 </Paper>
               </Grid>
+
               <Grid item xs={12} md={6} lg={6}>
                 <Paper className={classes.paper}>
                   <Typography variant="body2">
@@ -173,10 +187,10 @@ class Home extends Component {
                 </Paper>
               </Grid>
 
-              <Grid item xs={12} md={8} lg={8}>
+              <Grid item xs={12} md={12} lg={12}>
                 {
                   showTenantHistory ? (
-                    <TenantDashboard selectedTenant={selectedTenant} />
+                    <TenantDashboard selectedTenant={selectedTenant} paymentArray={paymentArray} />
                   ) : <></>
                 }
               </Grid>

@@ -6,13 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import { connect } from 'react-redux';
-import { firestoreConnect } from 'react-redux-firebase';
-import { compose } from 'redux';
-
-import PaymentForm from './PaymentForm';
 import PaymentHistory from './PaymentHistory';
 
 
@@ -20,15 +13,10 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
-  appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
   },
   paper: {
     padding: theme.spacing(2),
@@ -39,77 +27,115 @@ const styles = theme => ({
   fixedHeight: {
     height: 240,
   },
-  fabButton: {
-    position: 'absolute',
-    zIndex: 1,
-    right: 20,
-    bottom: 20
+  dInline: {
+    display: 'inline-block',
+    marginRight: theme.spacing(1)
   },
+  subheader: {
+    color: '#7b7b7b'
+  }
 });
 
 class TenantDashboard extends Component {
   state = {
-    openDialog: false,
-    selectedPayment: {}
+    paymentArray: []
   }
 
-  componentDidMount = () => {
-    const id = this.props.match.params ? this.props.match.params.id : '';
-  }
-
-  handleDialogOpen = () => {
-    this.setState({ openDialog: true });
-  }
-  handleDialogClose = () => {
-    this.setState({ openDialog: false });
-  }
 
   handleSelectedPayment = (paymentObjID) => {
-    const { payment } = this.props;
+    // const { payment } = this.props;
+    // console.log(paymentObjID);
+    // let paymentObj = payment.filter(_ => _.id === paymentObjID);
     console.log(paymentObjID);
-    let paymentObj = payment.filter(_ => _.id === paymentObjID);
-    console.log(paymentObj);
   }
+
 
 
   render() {
-    const { classes, payment, tenants } = this.props;
-    const { openDialog } = this.state;
+    const { classes, selectedTenant, paymentArray } = this.props;
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     return (
-      <div className={classes.root}>
-        <CssBaseline />
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
+      <Grid container spacing={3}>
 
-          <Container maxWidth="lg" className={classes.container}>
+        <Grid item xs={12} md={12} lg={12}>
+          <Paper className={classes.paper}>
+            {/* inner grid  */}
             <Grid container spacing={3}>
-              <Grid item xs={12} md={8} lg={8}>
-                <PaymentHistory payment={payment} handleSelectedPayment={this.handleSelectedPayment} />
+              <Grid item xs={12} md={4} lg={4}>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Name</Typography>
+                  <Typography variant="body1" className={classes.dInline}>{selectedTenant.name}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Address</Typography>
+                  <Typography variant="body1" className={classes.dInline}>{selectedTenant.address}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Adhaar No</Typography>
+                  <Typography variant="body1" className={classes.dInline}>{selectedTenant.adhaarNo}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Starting date</Typography>
+                  <Typography variant="body1" className={classes.dInline}>{selectedTenant.fromDate}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Ending date</Typography>
+                  <Typography variant="body1" className={classes.dInline}>{selectedTenant.toDate}</Typography>
+                </div>
               </Grid>
+              <Grid item xs={12} md={4} lg={4}>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Advanced</Typography>
+                  <Typography variant="body1" className={classes.dInline}>₹{selectedTenant.advancedAmount}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Rent</Typography>
+                  <Typography variant="body1" className={classes.dInline}>₹{selectedTenant.rentAmount}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Per unit charge</Typography>
+                  <Typography variant="body1" className={classes.dInline}>₹{selectedTenant.chargePerUnit}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Starting unit</Typography>
+                  <Typography variant="body1" className={classes.dInline}>{selectedTenant.startingUnit}</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Latest unit</Typography>
+                  <Typography variant="body1" className={classes.dInline}>
+                    {selectedTenant.payments[0] ? selectedTenant.payments[0].currentUnit : 0}
+                  </Typography>
+                </div>
+              </Grid>
+              <Grid item xs={12} md={4} lg={4}>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Total Rent received</Typography>
+                  <Typography variant="body1" className={classes.dInline}>₹</Typography>
+                </div>
+                <div>
+                  <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Last Payment</Typography>
+                  <Typography variant="body1" className={classes.dInline}></Typography>
+                </div>
 
+              </Grid>
             </Grid>
+          </Paper>
+        </Grid>
 
-            {/* <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={this.handleDialogOpen}>
-              <AddIcon />
-            </Fab>
-            {
-              openDialog ? <PaymentForm openDialog={openDialog} handleDialogClose={this.handleDialogClose} /> : <></>
-            } */}
-          </Container>
-        </main>
-      </div>
+        <Grid item xs={12} md={12} lg={12}>
+          <PaymentHistory
+            payment={paymentArray}
+            handleSelectedPayment={this.handleSelectedPayment}
+          />
+        </Grid>
+
+      </Grid>
+
+
+
     );
   }
 
-}
-
-
-const mapStateToProps = (state) => {
-  return {
-    payment: state.firestore.ordered.payment,
-    tenants: state.firestore.ordered.tenants
-  }
 }
 
 
