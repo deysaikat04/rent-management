@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -14,11 +13,10 @@ import AddIcon from '@material-ui/icons/Add';
 import Chip from '@material-ui/core/Chip';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Button from '@material-ui/core/Button';
-
 import { connect } from 'react-redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
-
+import Navbar from './Navbar';
 import DialogComponent from './DialogComponent';
 import TenantDashboard from './TenantDashboard';
 
@@ -120,13 +118,12 @@ class Home extends Component {
   }
 
   render() {
-    const { classes, tenants } = this.props;
+    const { classes, authed, tenants } = this.props;
     const { openDialog, dialogType, showTenantHistory, selectedTenant, paymentArray } = this.state;
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
     return (
       <div className={classes.root}>
         <CssBaseline />
+        <Navbar authed={authed} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
 

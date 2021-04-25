@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
-import Container from '@material-ui/core/Container';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { firestoreConnect, fireStoreConnect } from 'react-redux-firebase';
-import { compose } from 'redux';
 import { addTenant } from '../store/actions/tenantAction';
 
 const styles = theme => ({
@@ -49,18 +44,43 @@ class AddTenant extends Component {
                 startingUnit: '',
                 advancedAmount: '',
                 payments: {}
-            }
+            },
+            formError: {
+                fromDate: false,
+                tenure: false,
+            },
+            btnActive: true
         }
     }
 
+
     handleChange = (event) => {
         const { name, value, type } = event.target;
-        this.setState({
-            form: {
-                ...this.state.form,
-                [name]: type === 'number' ? parseInt(value) : type === 'date' ? moment(value).format('DD-MMMM-YYYY') : value
+        switch (type) {
+            case 'number': {
+                if (value >= 1) {
+                    this.setState({
+                        form: {
+                            ...this.state.form,
+                            [name]: parseInt(value)
+                        }
+                    });
+                }
+                break;
             }
-        });
+            case 'text':
+            case 'textarea': {
+                if (value !== '') {
+                    this.setState({
+                        form: {
+                            ...this.state.form,
+                            [name]: value
+                        }
+                    });
+                }
+                break;
+            }
+        };
     }
 
     handleMobileChange = (event) => {
@@ -87,6 +107,54 @@ class AddTenant extends Component {
         });
     }
 
+    handleDateChange = (event) => {
+        const { name, value } = event.target;
+        let ipDate = new Date(value).setHours(0, 0, 0, 0);
+        const today = new Date().setHours(0, 0, 0, 0);
+        if (ipDate < today) {
+            this.setState({
+                formError: {
+                    ...this.state.formError, fromDate: true
+                },
+                form: {
+                    ...this.state.form, [name]: ''
+                }
+            });
+        } else {
+            this.setState({
+                formError: {
+                    ...this.state.formError, fromDate: false
+                },
+                form: {
+                    ...this.state.form, [name]: value
+                }
+            });
+        }
+    }
+
+    handleTenureChange = (event) => {
+        const { name, value } = event.target;
+        if (value < 1 || value > 120) {
+            this.setState({
+                formError: {
+                    ...this.state.formError, tenureErr: true
+                },
+                form: {
+                    ...this.state.form, [name]: ''
+                }
+            });
+        } else {
+            this.setState({
+                formError: {
+                    ...this.state.formError, tenureErr: false
+                },
+                form: {
+                    ...this.state.form, [name]: Number(value)
+                }
+            });
+        }
+    }
+
     handleSubmit = (e) => {
         e.preventDefault();
         let toDate = moment().add(this.state.form.tenure, 'months').format("DD-MMMM-YYYY").toString();
@@ -102,6 +170,9 @@ class AddTenant extends Component {
         const { classes, handleDialogClose } = this.props;
         const { name, address, adhaarNo, fromDate, tenure, rentAmount, chargePerUnit, startingUnit, advancedAmount,
             mobileNoSecond, mobileNo } = this.state.form;
+        const { formError } = this.state;
+        const btnActive = name && address && adhaarNo && fromDate && tenure && rentAmount && chargePerUnit && startingUnit
+            && advancedAmount && mobileNo;
         return (
             <form onSubmit={this.handleSubmit}>
                 <Grid container spacing={2}>
@@ -122,7 +193,6 @@ class AddTenant extends Component {
                     </Grid>
                     <Grid item xs={12} md={6} lg={6}>
                         <TextField
-                            // type="number"
                             color="secondary"
                             variant="standard"
                             margin="dense"
@@ -194,9 +264,11 @@ class AddTenant extends Component {
                             name="fromDate"
                             label="From Date"
                             value={fromDate}
-                            onChange={this.handleChange}
+                            onChange={this.handleDateChange}
                             InputLabelProps={{ shrink: true }}
                             fullWidth
+                            required
+                            {...(formError.fromDate && { error: true, helperText: `Please select today's date or future date` })}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -209,13 +281,15 @@ class AddTenant extends Component {
                             name="tenure"
                             label="Tenure"
                             value={tenure}
-                            onChange={this.handleChange}
+                            onChange={this.handleTenureChange}
                             InputLabelProps={{ shrink: true }}
                             helperText={
                                 fromDate && tenure ? `Contract end date ${moment().add(tenure, 'months').format("DD-MMMM-YYYY")}`
-                                    : 'Please enter the duration to get Contract end date'
+                                    : 'Please enter the number of months'
                             }
                             fullWidth
+                            required
+                            {...(formError.tenure && { error: true, helperText: `Please enter value more than 1 and less than 121` })}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -295,6 +369,7 @@ class AddTenant extends Component {
                                 className={classes.buttonSave}
                                 size="small"
                                 type="submit"
+                                disabled={!btnActive}
                             >
                                 Save
                             </Button>
@@ -308,9 +383,6 @@ class AddTenant extends Component {
                             </Button>
                         </div>
                     </Grid>
-                    {/* <Grid item xs={6} md={6} lg={6}>
-                        <Typography variant="h6">Total: <Typography>{new Date().toDateString()}</Typography>  </Typography>
-                    </Grid> */}
                 </Grid>
             </form>
         );
