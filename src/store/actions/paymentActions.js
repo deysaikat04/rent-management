@@ -2,7 +2,7 @@ export const addPayment = (paymentObj, tenantId) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         //make async calls to DB
         const firestore = getFirestore();
-        const profile = getState().firebase.profile;
+        // const profile = getState().firebase.profile;
 
         firestore.collection('tenants').doc(tenantId).update({
             payments: { ...paymentObj },

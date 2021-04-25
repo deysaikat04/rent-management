@@ -7,7 +7,6 @@ import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import moment from 'moment';
@@ -55,13 +54,14 @@ class PaymentDialog extends Component {
             tenantId: '',
             startingUnit: 0,
             chargePerUnit: 0,
-            prevPayments: []
+            prevPayments: [],
+            fieldDisabled: true
         }
     }
 
 
     handleTenantSelectChange = (event) => {
-        this.setState({ tenantName: event.target.value });
+        this.setState({ tenantName: event.target.value, fieldDisabled: false });
     }
 
     isEmpty = inputObject => {
@@ -129,23 +129,23 @@ class PaymentDialog extends Component {
     }
 
     render() {
-        const { tenantName, startingUnit, chargePerUnit } = this.state;
+        const { fieldDisabled, tenantName, startingUnit, chargePerUnit } = this.state;
         const { currentUnit, rentAmount, total, unitConsumed, electricBill } = this.state.form;
         const { classes, payment, tenants, handleDialogClose } = this.props;
-        const lastPayment = payment && payment.length ? payment[0] : {};
 
         return (
             <form onSubmit={this.handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={6} lg={6}>
                         <FormControl className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-label">Tenant</InputLabel>
+                            <InputLabel id="demo-simple-select-label">Tenant Name</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 color="secondary"
                                 value={tenantName}
                                 onChange={this.handleTenantSelectChange}
+                                required
                             >
                                 {
                                     tenants && tenants.map(tenant => {
@@ -173,6 +173,7 @@ class PaymentDialog extends Component {
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">₹</InputAdornment>,
                             }}
+                            disabled={fieldDisabled}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -186,6 +187,7 @@ class PaymentDialog extends Component {
                             label="Previous Unit*"
                             value={startingUnit}
                             fullWidth
+                            disabled={fieldDisabled}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -200,6 +202,7 @@ class PaymentDialog extends Component {
                             value={currentUnit}
                             onChange={this.handleUnitChange}
                             fullWidth
+                            disabled={fieldDisabled}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -214,6 +217,7 @@ class PaymentDialog extends Component {
                             helperText={`x ${chargePerUnit}`}
                             fullWidth
                             readOnly
+                            disabled={fieldDisabled}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -230,6 +234,7 @@ class PaymentDialog extends Component {
                             }}
                             fullWidth
                             readOnly
+                            disabled={fieldDisabled}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -243,6 +248,7 @@ class PaymentDialog extends Component {
                                 color="secondary"
                                 className={classes.buttonSave}
                                 size="small"
+                                disabled={fieldDisabled}
                             >
                                 Save
                             </Button>

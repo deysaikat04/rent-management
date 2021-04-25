@@ -10,14 +10,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import Cookies from "js-cookie";
 
 const drawerWidth = 180;
 
@@ -107,11 +107,14 @@ class Home extends Component {
         this.setState({ open: false });
     };
 
-
+    handleLogout = () => {
+        Cookies.remove("userid", { path: "/" });
+        window.location.reload();
+    };
 
 
     render() {
-        const { classes } = this.props;
+        const { classes, authed } = this.props;
         const { open } = this.state;
         return (
             <div className={classes.root}>
@@ -129,14 +132,19 @@ class Home extends Component {
                         </IconButton>
                         <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                             {!open ? 'RentKhata' : ''}
-                            {/* {process.env.REACT_APP_NAME} */}
                         </Typography>
-
-                        <IconButton color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
+                        {authed && (
+                            <div className={classes.menuButton}>
+                                <IconButton
+                                    aria-label="Log out"
+                                    aria-controls="menu-appbar"
+                                    onClick={this.handleLogout}
+                                    color="inherit"
+                                >
+                                    <ExitToAppIcon />
+                                </IconButton>
+                            </div>
+                        )}
                     </Toolbar>
                 </AppBar>
                 <Drawer

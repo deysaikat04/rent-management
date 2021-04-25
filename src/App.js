@@ -1,10 +1,10 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core';
-import Navbar from './components/Navbar';
 import Home from './components/Home';
-import TenantDashboard from './components/TenantDashboard';
+import Login from './components/Login';
+import Cookies from "js-cookie";
 
 export const light = {
   palette: {
@@ -22,17 +22,44 @@ export const light = {
   }
 }
 
+function PrivateRoute({ component: Component, authed, userid, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        authed === true ? (
+          <Component {...props} authed={authed} userid={userid} />
+        ) : (
+            <Redirect
+              to={{ pathname: "/login", state: { from: props.location } }}
+            />
+          )
+      }
+    />
+  );
+}
+
 function App() {
   const appliedTheme = createMuiTheme(light);
+  const userid = Cookies.get("userid");
+  const authed = userid !== undefined;
+
   return (
     <ThemeProvider theme={appliedTheme}>
       <BrowserRouter>
 
-        <Navbar />
-        <Switch>
-          <Route exact path='/' render={(props) => <Home {...props} />} />
-          <Route exact path='/tenant/:id' render={(props) => <TenantDashboard {...props} />} />
 
+        <Switch>
+          <Route exact path='/' render={(props) => <Redirect to={'/login'} />} />
+          <Route exact path='/login' render={() => <Login />} />
+          <Route exact path='/dashboard' render={() => <Home />} />
+          <PrivateRoute
+            exact
+            path="/dashboard"
+            authed={authed}
+            userid={userid}
+            component={Home}
+          />
         </Switch>
       </BrowserRouter>
     </ThemeProvider>
