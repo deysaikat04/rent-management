@@ -157,12 +157,12 @@ class AddTenant extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let toDate = moment().add(this.state.form.tenure, 'months').format("DD-MMMM-YYYY").toString();
+        let toDate = moment().add(this.state.form.tenure, 'months').format("YYYY-MM-DD").toString();
         this.setState({
             form: { ...this.state.form, toDate }
         }, () => {
             this.props.handleDialogClose();
-            this.props.addTenant(this.state.form);
+            this.props.addTenant(this.state.form, this.props.userid);
         })
     }
 
@@ -392,7 +392,7 @@ class AddTenant extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addTenant: (tenantObj) => dispatch(addTenant(tenantObj))
+        addTenant: (tenantObj, userId) => dispatch(addTenant(tenantObj, userId))
     }
 }
 

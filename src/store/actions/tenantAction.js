@@ -1,10 +1,10 @@
-export const addTenant = (tenant) => {
+export const addTenant = (tenant, userId) => {
 
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         //make async calls to DB
         const firestore = getFirestore();
-        const profile = getState().firebase.profile;
         firestore.collection('tenants').add({
+            userId: userId,
             ...tenant,
             toc: new Date()
         }).then(() => {

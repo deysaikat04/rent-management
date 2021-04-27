@@ -19,7 +19,7 @@ const initState = {
 const paymentReducer = (state = initState, action) => {
     switch (action.type) {
         case 'ADD_TENANT':
-            console.log('TENANT ADDED', action.tenant);
+            console.log('TENANT ADDED');
             return state
 
         case 'ADD_TENANT_ERROR':

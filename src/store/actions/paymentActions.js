@@ -1,4 +1,4 @@
-export const addPayment = (paymentObj, tenantId) => {
+export const addPayment = (paymentObj, tenantId, userId) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         //make async calls to DB
         const firestore = getFirestore();

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core';
 import Home from './components/Home';
 import Login from './components/Login';
 import Cookies from "js-cookie";
+import Navbar from "./components/Navbar";
+import TenantDashboard from "./components/TenantDashboard";
 
 export const light = {
   palette: {
@@ -14,7 +16,7 @@ export const light = {
       mainSecondary: '#474b4f'
     },
     secondary: {
-      main: '#86c232',
+      main: '#43a047',
     },
   },
   typography: {
@@ -39,20 +41,20 @@ function PrivateRoute({ component: Component, authed, userid, ...rest }) {
   );
 }
 
-function App() {
+function App(props) {
   const appliedTheme = createMuiTheme(light);
   const userid = Cookies.get("userid");
   const authed = userid !== undefined;
 
+
   return (
     <ThemeProvider theme={appliedTheme}>
       <BrowserRouter>
-
-
+        <Navbar authed={authed} />
         <Switch>
           <Route exact path='/' render={(props) => <Redirect to={'/login'} />} />
-          <Route exact path='/login' render={() => <Login />} />
-          <Route exact path='/dashboard' render={() => <Home />} />
+          <Route exact path='/login' render={(props) => <Login {...props} />} />
+          {/* <Route exact path='/dashboard' render={() => <Home />} /> */}
           <PrivateRoute
             exact
             path="/dashboard"
@@ -60,10 +62,18 @@ function App() {
             userid={userid}
             component={Home}
           />
+          <PrivateRoute
+            exact
+            path="/history"
+            authed={authed}
+            userid={userid}
+            component={TenantDashboard}
+          />
         </Switch>
       </BrowserRouter>
     </ThemeProvider>
   );
 }
 
-export default App;
+
+export default (App);
