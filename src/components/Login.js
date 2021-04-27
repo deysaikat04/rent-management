@@ -8,7 +8,9 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { GoogleLogin } from "react-google-login";
-
+import { connect } from 'react-redux';
+import { addUser, signIn } from '../store/actions/authAction';
+import Cookies from "js-cookie";
 
 const styles = theme => ({
   root: {
@@ -38,11 +40,11 @@ const styles = theme => ({
     width: 150
   },
   googleButton: {
-    backgroundColor: `#86c232 !important`,
+    backgroundColor: `${theme.palette.secondary.main} !important`,
     color: `#ffffff !important`
   },
   greentext: {
-    color: '#86c232',
+    color: theme.palette.secondary.main,
     marginTop: theme.spacing(4),
   }
 });
@@ -57,18 +59,25 @@ class Login extends Component {
     paymentArray: []
   }
 
+  // componentDidMount = () => {
+  //   if (Cookies.get('userid') !== undefined) {
+  //     this.props.signIn(Cookies.get('userid'));
+  //     this.props.history.push("/dashboard");
+  //   }
+  // }
+
   responseGoogle = (response) => {
     try {
       const { googleId } = response.profileObj;
       const { expires_at } = response.tokenObj;
-
       document.cookie =
         "userid=" +
         googleId +
         ";expires=" +
         new Date(expires_at).toUTCString() +
         ";path=/";
-      window.location.pathname = "/dashboard";
+
+      window.location.pathname = "/dashboard"
     } catch (e) {
       console.error(e);
     }
@@ -115,4 +124,13 @@ class Login extends Component {
 
 
 
-export default withStyles(styles, { withTheme: true })(Login);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addUser: (userObj) => dispatch(addUser(userObj)),
+    signIn: (userId) => dispatch(signIn(userId))
+  }
+}
+
+export default withStyles(styles, { withTheme: true })(
+  connect(null, mapDispatchToProps)(Login)
+);

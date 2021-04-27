@@ -5,7 +5,7 @@ const initState = {
 const paymentReducer = (state = initState, action) => {
     switch (action.type) {
         case 'ADD_PAYMENT':
-            console.log('Payment added', action.payment);
+            console.log('Payment added');
             return state
 
         case 'ADD_PAYMENT_ERROR':

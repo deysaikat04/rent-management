@@ -36,7 +36,7 @@ class DialogComponent extends Component {
 
 
     render() {
-        const { classes, title, openDialog, handleDialogClose, dialogType } = this.props;
+        const { classes, userid, title, openDialog, handleDialogClose, dialogType } = this.props;
 
         return (
 
@@ -57,7 +57,15 @@ class DialogComponent extends Component {
                 </DialogTitle>
                 <DialogContent>
                     {
-                        dialogType === 'payment' ? <PaymentForm handleDialogClose={handleDialogClose} /> : <AddTenant handleDialogClose={handleDialogClose} />
+                        dialogType === 'payment' ? (
+                            <PaymentForm
+                                userid={userid}
+                                handleDialogClose={handleDialogClose}
+                            />
+                        ) : <AddTenant
+                                userid={userid}
+                                handleDialogClose={handleDialogClose}
+                            />
                     }
 
                 </DialogContent>

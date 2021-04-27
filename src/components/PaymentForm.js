@@ -9,6 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { addPayment } from '../store/actions/paymentActions';
 import { connect } from 'react-redux';
@@ -41,11 +42,12 @@ class PaymentDialog extends Component {
         super(props);
         this.state = {
             form: {
+                id: uuidv4(),
                 monthName: moment(moment(), 'M').format('MMMM'),
                 year: moment().year(),
                 rentAmount: 0,
                 prevUnit: 0,
-                currentUnit: 0,
+                currentUnit: '',
                 unitConsumed: 0,
                 electricBill: 0,
                 total: 0
@@ -55,7 +57,8 @@ class PaymentDialog extends Component {
             startingUnit: 0,
             chargePerUnit: 0,
             prevPayments: [],
-            fieldDisabled: true
+            fieldDisabled: true,
+            currentUnitErr: false
         }
     }
 
@@ -105,7 +108,7 @@ class PaymentDialog extends Component {
     handleSubmit = (event) => {
         event.preventDefault();
         const newPaymentArr = [{ ...this.state.form }, ...this.state.prevPayments];
-        this.props.addPayment(newPaymentArr, this.state.tenantId);
+        this.props.addPayment(newPaymentArr, this.state.tenantId, this.props.userid);
         this.props.handleDialogClose();
     }
 
@@ -116,20 +119,33 @@ class PaymentDialog extends Component {
         const unitConsumed = (value - startingUnit);
         const electricBill = (unitConsumed * chargePerUnit);
         const total = electricBill + rentAmount;
-        this.setState({
-            form: {
-                ...this.state.form,
-                [name]: Number(value),
-                unitConsumed,
-                electricBill,
-                total
-            }
-        });
+
+        if (startingUnit && value <= startingUnit) {
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    [name]: value ? Number(value) : ''
+                },
+                currentUnitErr: true
+            });
+        } else {
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    [name]: value ? Number(value) : '',
+                    unitConsumed,
+                    electricBill,
+                    total
+                },
+                currentUnitErr: false
+            });
+        }
+
 
     }
 
     render() {
-        const { fieldDisabled, tenantName, startingUnit, chargePerUnit } = this.state;
+        const { fieldDisabled, tenantName, startingUnit, chargePerUnit, currentUnitErr } = this.state;
         const { currentUnit, rentAmount, total, unitConsumed, electricBill } = this.state.form;
         const { classes, payment, tenants, handleDialogClose } = this.props;
 
@@ -203,6 +219,7 @@ class PaymentDialog extends Component {
                             onChange={this.handleUnitChange}
                             fullWidth
                             disabled={fieldDisabled}
+                            {...(currentUnitErr && { error: true, helperText: `Current unit should be greater than starting unit` })}
                         />
                     </Grid>
                     <Grid item xs={6} md={6} lg={6}>
@@ -248,7 +265,7 @@ class PaymentDialog extends Component {
                                 color="secondary"
                                 className={classes.buttonSave}
                                 size="small"
-                                disabled={fieldDisabled}
+                                disabled={fieldDisabled || currentUnitErr}
                             >
                                 Save
                             </Button>

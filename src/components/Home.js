@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -10,15 +11,14 @@ import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import Chip from '@material-ui/core/Chip';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Button from '@material-ui/core/Button';
+import Cookies from "js-cookie";
 import { connect } from 'react-redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
-import Navbar from './Navbar';
 import DialogComponent from './DialogComponent';
 import TenantDashboard from './TenantDashboard';
+import TenantCard from './TenantCard';
 
 
 function Copyright() {
@@ -118,12 +118,18 @@ class Home extends Component {
   }
 
   render() {
-    const { classes, authed, tenants } = this.props;
+    const { classes, userid, tenants } = this.props;
     const { openDialog, dialogType, showTenantHistory, selectedTenant, paymentArray } = this.state;
+
+    if (showTenantHistory) {
+      return <Redirect
+        to={{ pathname: "/history", state: { selectedTenant: selectedTenant, paymentArray: paymentArray } }}
+      />
+    }
+
     return (
-      <div className={classes.root}>
+      <div className={classes.root} >
         <CssBaseline />
-        <Navbar authed={authed} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
 
@@ -154,20 +160,19 @@ class Home extends Component {
                     </Grid>
 
                     <Grid item xs={12} md={12} lg={12}>
-                      {
-                        tenants && tenants.map(tenant => {
-                          return <Chip
-                            key={tenant.id}
-                            icon={<AccountCircleIcon />}
-                            label={tenant.name}
-                            clickable
-                            color="primary"
-                            className={selectedTenant.id === tenant.id ? classes.nameChipSelected : classes.nameChip}
-                            variant="outlined"
-                            onClick={() => this.showTenant(tenant.id)}
-                          />
-                        })
-                      }
+                      <Grid container spacing={3}>
+                        {
+                          tenants && tenants.map(tenant => {
+                            return <Grid item xs={12} md={4} lg={3} key={tenant.id}>
+                              <TenantCard
+                                tenant={tenant}
+                                showTenant={this.showTenant}
+                              />
+                            </Grid>
+                          })
+                        }
+                      </Grid>
+
                     </Grid>
                   </Grid>
                 </Paper>
@@ -195,6 +200,7 @@ class Home extends Component {
                   openDialog={openDialog}
                   handleDialogClose={this.handleDialogClose}
                   title={dialogType === "payment" ? "Add Payment" : "Add Tenant"}
+                  userid={userid}
                   dialogType={dialogType}
                 />
               ) : <></>
@@ -218,8 +224,13 @@ const mapStateToProps = (state) => {
 export default withStyles(styles, { withTheme: true })(
   compose(
     connect(mapStateToProps),
-    firestoreConnect([
-      { collection: 'tenants' }
-    ])
+    firestoreConnect((props) => {
+      return [
+        {
+          collection: 'tenants',
+          where: ['userId', '==', props.userid]
+        }
+      ]
+    })
   )(Home)
 );
