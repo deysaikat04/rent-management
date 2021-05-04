@@ -169,7 +169,7 @@ class Home extends Component {
                           variant="outlined"
                           color="secondary"
                           className={classes.button}
-                          endIcon={<AddIcon />}
+                          startIcon={<AddIcon />}
                           size="small"
                           onClick={() => this.handleDialogOpen("tenant")}
                         >

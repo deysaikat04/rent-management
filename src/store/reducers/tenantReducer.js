@@ -19,9 +19,15 @@ const tenantReducer = (state = initState, action) => {
             }
             return state
 
+        case 'TENANT_DELETED':
+            return state
+
+        case 'TENANT_DELETED_ERROR':
+            console.log('Error while deleting project..', action.err);
+            return state
+
         case 'RESET':
             return initState
-
 
         default:
             return state
