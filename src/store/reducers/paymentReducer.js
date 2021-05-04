@@ -1,16 +1,25 @@
 const initState = {
-    payment: []
+    error: true,
+    msg: ''
 }
 
 const paymentReducer = (state = initState, action) => {
     switch (action.type) {
         case 'ADD_PAYMENT':
-            console.log('Payment added');
+            state = {
+                error: action.payload
+            }
             return state
 
         case 'ADD_PAYMENT_ERROR':
-            console.log('Error while adding Payment..', action.err);
+            state = {
+                error: true,
+                msg: action.payload
+            }
             return state
+
+        case 'RESET':
+            return initState
 
         default:
             return state

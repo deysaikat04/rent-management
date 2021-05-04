@@ -1,30 +1,26 @@
 
 const initState = {
-    tenant: [
-        {
-            name: '',
-            address: '',
-            adhaarNo: '',
-            fromDate: '',
-            tenure: '',
-            toDate: '',
-            rentAmount: '',
-            chargePerUnit: '',
-            startingUnit: '',
-            advancedAmount: ''
-        }
-    ]
+    error: true,
+    msg: ''
 }
 
-const paymentReducer = (state = initState, action) => {
+const tenantReducer = (state = initState, action) => {
     switch (action.type) {
         case 'ADD_TENANT':
-            console.log('TENANT ADDED');
+            state = {
+                error: action.payload
+            }
             return state
 
         case 'ADD_TENANT_ERROR':
-            console.log('Error while adding Tenant..', action.err);
+            state = {
+                error: true,
+                msg: action.payload
+            }
             return state
+
+        case 'RESET':
+            return initState
 
 
         default:
@@ -32,4 +28,4 @@ const paymentReducer = (state = initState, action) => {
     }
 }
 
-export default paymentReducer;
+export default tenantReducer;

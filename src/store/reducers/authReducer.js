@@ -9,18 +9,15 @@ const authReducer = (state = initState, action) => {
             state = {
                 userId: action.payload
             }
-            console.log("USer added")
             return state
 
         case 'USER_SIGNIN':
             state = {
                 userId: action.payload
             }
-            console.log(state)
             return state
 
         case 'ADD_USER_ERROR':
-            console.log('Error while adding User.', action.err);
             return state
 
         default:
