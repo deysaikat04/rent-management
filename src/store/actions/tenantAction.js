@@ -16,6 +16,21 @@ export const addTenant = (tenant, userId) => {
     }
 };
 
+export const removeTenant = (id) => {
+
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        //make async calls to DB
+        //console.log(projectId)
+        const firestore = getFirestore();
+        firestore.collection('tenants').doc(id).delete().then(() => {
+            dispatch({ type: 'TENANT_DELETED' });
+        }).catch((err) => {
+            dispatch({ type: 'TENANT_DELETED_ERROR', err });
+        });
+
+    }
+};
+
 export const resetState = () => {
     return {
         type: 'RESET'
