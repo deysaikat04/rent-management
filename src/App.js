@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core';
@@ -54,7 +54,6 @@ function App(props) {
         <Switch>
           <Route exact path='/' render={(props) => <Redirect to={'/login'} />} />
           <Route exact path='/login' render={(props) => <Login {...props} />} />
-          {/* <Route exact path='/dashboard' render={() => <Home />} /> */}
           <PrivateRoute
             exact
             path="/dashboard"

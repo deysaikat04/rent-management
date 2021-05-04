@@ -2,18 +2,18 @@ import * as React from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 
 const columns = [
-    { field: 'monthName', headerName: 'Month', type: 'number' },
-    { field: 'year', headerName: 'Year', width: 130 },
-    { field: 'rentAmount', headerName: 'Rent', type: 'number', width: 130 },
-    { field: 'currentUnit', headerName: 'Current Unit', type: 'number', width: 130 },
-    { field: 'prevUnit', headerName: 'Prev Unit', type: 'number', width: 130 },
+    { field: 'monthName', headerName: 'Month' },
+    { field: 'total', headerName: 'Total', type: 'number' },
+    { field: 'rentAmount', headerName: 'Rent', type: 'number' },
+    { field: 'currentUnit', headerName: 'Current Unit', type: 'number' },
+    { field: 'prevUnit', headerName: 'Prev Unit', type: 'number' },
     {
         field: 'unitConsumed',
         headerName: 'Unit Consumed',
-        type: 'number', width: 130
+        type: 'number'
     },
-    { field: 'electricBill', headerName: 'Electric Bill', type: 'number', width: 130 },
-    { field: 'total', headerName: 'Total', type: 'number', width: 130 },
+    { field: 'electricBill', headerName: 'Electric Bill', type: 'number' },
+    { field: 'year', headerName: 'Year' },
 
 ];
 

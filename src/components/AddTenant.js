@@ -80,6 +80,7 @@ class AddTenant extends Component {
                 }
                 break;
             }
+            default: break;
         };
     }
 
@@ -157,9 +158,10 @@ class AddTenant extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let toDate = moment().add(this.state.form.tenure, 'months').format("YYYY-MM-DD").toString();
+        let toDate = moment().add(this.state.form.tenure, 'months').format("DD-MMMM-YYYY").toString();
+        let fromDate = moment(this.state.form.fromDate).format("DD-MMMM-YYYY").toString();
         this.setState({
-            form: { ...this.state.form, toDate }
+            form: { ...this.state.form, toDate, fromDate }
         }, () => {
             this.props.handleDialogClose();
             this.props.addTenant(this.state.form, this.props.userid);

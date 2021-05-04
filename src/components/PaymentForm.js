@@ -50,7 +50,8 @@ class PaymentDialog extends Component {
                 currentUnit: '',
                 unitConsumed: 0,
                 electricBill: 0,
-                total: 0
+                total: 0,
+                toc: moment().format('DD-MMMM-YYYY')
             },
             tenantName: '',
             tenantId: '',
@@ -147,7 +148,7 @@ class PaymentDialog extends Component {
     render() {
         const { fieldDisabled, tenantName, startingUnit, chargePerUnit, currentUnitErr } = this.state;
         const { currentUnit, rentAmount, total, unitConsumed, electricBill } = this.state.form;
-        const { classes, payment, tenants, handleDialogClose } = this.props;
+        const { classes, tenants, handleDialogClose } = this.props;
 
         return (
             <form onSubmit={this.handleSubmit}>

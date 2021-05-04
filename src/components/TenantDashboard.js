@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import clsx from 'clsx';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
@@ -27,6 +26,7 @@ const styles = theme => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+    minHeight: 150
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -49,12 +49,19 @@ const styles = theme => ({
 
 class TenantDashboard extends Component {
   state = {
-    paymentArray: []
+    paymentArray: [],
+    totalAmount: 0
   }
 
+  componentDidMount = () => {
+    const { paymentArray } = this.props.location.state;
+    let totalAmount = 0;
+    paymentArray.map(payment => {
+      totalAmount += payment.total
+      return 0
+    });
+    this.setState({ totalAmount });
 
-  handleSelectedPayment = (paymentObjID) => {
-    console.log(paymentObjID);
   }
 
   handleClick = (event) => {
@@ -65,7 +72,6 @@ class TenantDashboard extends Component {
   render() {
     const { classes } = this.props;
     const { selectedTenant, paymentArray } = this.props.location.state;
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     return (
       <div className={classes.root} >
         <CssBaseline />
@@ -83,15 +89,15 @@ class TenantDashboard extends Component {
                 </Breadcrumbs>
               </Grid>
               <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  {/* inner grid  */}
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12} lg={12}>
-                      <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-                        Tenant Details
+                {/* inner grid  */}
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12} lg={12}>
+                    <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+                      Tenant Details
                     </Typography>
-                    </Grid>
-                    <Grid item xs={12} md={4} lg={4}>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Paper className={classes.paper}>
                       <div>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Name</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.name}</Typography>
@@ -112,8 +118,10 @@ class TenantDashboard extends Component {
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Ending date</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.toDate}</Typography>
                       </div>
-                    </Grid>
-                    <Grid item xs={12} md={4} lg={4}>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Paper className={classes.paper}>
                       <div>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Advanced</Typography>
                         <Typography variant="body1" className={classes.dInline}>₹{selectedTenant.advancedAmount}</Typography>
@@ -136,26 +144,27 @@ class TenantDashboard extends Component {
                           {selectedTenant.payments[0] ? selectedTenant.payments[0].currentUnit : 0}
                         </Typography>
                       </div>
-                    </Grid>
-                    <Grid item xs={12} md={4} lg={4}>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Paper className={classes.paper}>
                       <div>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Total Rent received</Typography>
-                        <Typography variant="body1" className={classes.dInline}>₹</Typography>
+                        <Typography variant="body1" className={classes.dInline}>₹ {this.state.totalAmount}</Typography>
                       </div>
                       <div>
-                        <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Last Payment</Typography>
-                        <Typography variant="body1" className={classes.dInline}></Typography>
+                        <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Last Payment Dt</Typography>
+                        <Typography variant="body1" className={classes.dInline}>{paymentArray.length ? paymentArray[0].toc : ''}</Typography>
                       </div>
+                    </Paper>
 
-                    </Grid>
                   </Grid>
-                </Paper>
+                </Grid>
               </Grid>
 
               <Grid item xs={12} md={12} lg={12}>
                 <PaymentHistory
                   payment={paymentArray}
-                  handleSelectedPayment={this.handleSelectedPayment}
                 />
               </Grid>
 

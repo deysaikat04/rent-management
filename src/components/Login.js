@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { GoogleLogin } from "react-google-login";
 import { connect } from 'react-redux';
 import { addUser, signIn } from '../store/actions/authAction';
-import Cookies from "js-cookie";
 
 const styles = theme => ({
   root: {
@@ -59,12 +56,6 @@ class Login extends Component {
     paymentArray: []
   }
 
-  // componentDidMount = () => {
-  //   if (Cookies.get('userid') !== undefined) {
-  //     this.props.signIn(Cookies.get('userid'));
-  //     this.props.history.push("/dashboard");
-  //   }
-  // }
 
   responseGoogle = (response) => {
     try {
@@ -90,7 +81,7 @@ class Login extends Component {
         <CssBaseline />
         <Paper className={classes.paper}>
           <Box >
-            <img src='/tree.svg' className={classes.image} />
+            <img src='/tree.svg' className={classes.image} alt="tree" />
           </Box>
           <Box className={classes.header}>
             <Typography variant="h6">

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
@@ -12,21 +11,27 @@ import Link from '@material-ui/core/Link';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import Cookies from "js-cookie";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import { connect } from 'react-redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
 import DialogComponent from './DialogComponent';
 import TenantDashboard from './TenantDashboard';
 import TenantCard from './TenantCard';
+import { resetState } from '../store/actions/tenantAction';
+import { resetPaymentState } from '../store/actions/paymentActions';
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="#">
+        Crafted with love by Saikat
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -106,6 +111,20 @@ class Home extends Component {
     this.setState({ openDialog: false, dialogType: '' });
   }
 
+  handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.props.resetState();
+  };
+
+  handleAlertCloseForPayment = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.props.resetPaymentState();
+  };
+
   showTenant = (tenantId) => {
     const { tenants } = this.props;
     let paymentArray = [];
@@ -118,7 +137,7 @@ class Home extends Component {
   }
 
   render() {
-    const { classes, userid, tenants } = this.props;
+    const { classes, userid, tenants, hasError, hasPaymentError } = this.props;
     const { openDialog, dialogType, showTenantHistory, selectedTenant, paymentArray } = this.state;
 
     if (showTenantHistory) {
@@ -163,7 +182,7 @@ class Home extends Component {
                       <Grid container spacing={3}>
                         {
                           tenants && tenants.map(tenant => {
-                            return <Grid item xs={12} md={4} lg={3} key={tenant.id}>
+                            return <Grid item xs={12} sm={6} md={4} lg={3} key={tenant.id}>
                               <TenantCard
                                 tenant={tenant}
                                 showTenant={this.showTenant}
@@ -205,6 +224,26 @@ class Home extends Component {
                 />
               ) : <></>
             }
+            {
+              !hasError ? (
+                <Snackbar open={!hasError} autoHideDuration={2000} onClose={this.handleAlertClose}
+                  style={{ marginBottom: '32px' }}>
+                  <Alert onClose={this.handleAlertClose} severity={'success'}>
+                    Tenant added successfully!
+                  </Alert>
+                </Snackbar>
+              ) : null
+            }
+            {
+              !hasPaymentError ? (
+                <Snackbar open={!hasPaymentError} autoHideDuration={2000} onClose={this.handleAlertClose}
+                  style={{ marginBottom: '32px' }}>
+                  <Alert onClose={this.handleAlertClose} severity={'success'}>
+                    Payment added successfully!
+                  </Alert>
+                </Snackbar>
+              ) : null
+            }
           </Container>
         </main>
       </div >
@@ -216,14 +255,22 @@ class Home extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    tenants: state.firestore.ordered.tenants
+    tenants: state.firestore.ordered.tenants,
+    hasError: state.tenants.error,
+    hasPaymentError: state.payment.error,
   }
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    resetState: () => dispatch(resetState()),
+    resetPaymentState: () => dispatch(resetPaymentState())
+  }
+}
 
 export default withStyles(styles, { withTheme: true })(
   compose(
-    connect(mapStateToProps),
+    connect(mapStateToProps, mapDispatchToProps),
     firestoreConnect((props) => {
       return [
         {

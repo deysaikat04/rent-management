@@ -36,14 +36,14 @@ export default function TenantCard(props) {
         <Card className={classes.card} onClick={() => props.showTenant(tenant.id)}>
             <CardContent>
 
-                <Typography variant="h5" component="h2">
+                <Typography variant="h5" component="h2" gutterBottom>
                     {tenant.name}
-                </Typography>
-                <Typography className={classes.title} color="textSecondary" gutterBottom>
-                    {tenant.address}
                 </Typography>
                 <Typography variant="body2" component="p">
                     {tenant.mobileNo}
+                </Typography>
+                <Typography className={classes.title} color="textSecondary" gutterBottom>
+                    {tenant.address}
                 </Typography>
             </CardContent>
 
