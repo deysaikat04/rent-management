@@ -10,9 +10,9 @@ const useStyles = makeStyles({
         minHeight: 120,
         backgroundColor: '#8bc34a24',
         cursor: 'pointer',
-        transition: '.2s ease',
+        transition: '.4s ease',
         '&:hover': {
-            boxShadow: "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+            boxShadow: "0 15px 30px rgb(0 0 0 / 15%), 0 4px 10px rgb(0 0 0 / 10%)",
         },
     },
     bullet: {
