@@ -23,8 +23,6 @@ const styles = theme => ({
         color: theme.palette.grey[500],
     },
 });
-
-
 class DialogComponent extends Component {
 
     constructor(props) {
@@ -32,9 +30,6 @@ class DialogComponent extends Component {
         this.state = {
         }
     }
-
-
-
     render() {
         const { classes, userid, title, openDialog, handleDialogClose, dialogType } = this.props;
 

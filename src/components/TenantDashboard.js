@@ -51,7 +51,11 @@ const styles = theme => ({
     color: '#7b7b7b'
   },
   link: {
-    cursor: 'pointer'
+    cursor: 'pointer'  
+  },
+  space: {
+    display: 'flex',
+    justifyContent: 'space-between'
   }
 });
 
@@ -123,23 +127,23 @@ class TenantDashboard extends Component {
                   </Grid>
                   <Grid item xs={12} sm={6} md={4} lg={4}>
                     <Paper className={classes.paper}>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Name</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.name}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Address</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.address}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Adhaar No</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.adhaarNo}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Starting date</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.fromDate}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Ending date</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.toDate}</Typography>
                       </div>
@@ -147,23 +151,23 @@ class TenantDashboard extends Component {
                   </Grid>
                   <Grid item xs={12} sm={6} md={4} lg={4}>
                     <Paper className={classes.paper}>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Advanced</Typography>
                         <Typography variant="body1" className={classes.dInline}>₹{selectedTenant.advancedAmount}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Rent</Typography>
                         <Typography variant="body1" className={classes.dInline}>₹{selectedTenant.rentAmount}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Per unit charge</Typography>
                         <Typography variant="body1" className={classes.dInline}>₹{selectedTenant.chargePerUnit}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Starting unit</Typography>
                         <Typography variant="body1" className={classes.dInline}>{selectedTenant.startingUnit}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Latest unit</Typography>
                         <Typography variant="body1" className={classes.dInline}>
                           {selectedTenant.payments[0] ? selectedTenant.payments[0].currentUnit : 0}
@@ -173,11 +177,11 @@ class TenantDashboard extends Component {
                   </Grid>
                   <Grid item xs={12} sm={6} md={4} lg={4}>
                     <Paper className={classes.paper}>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Total Rent received</Typography>
                         <Typography variant="body1" className={classes.dInline}>₹ {this.state.totalAmount}</Typography>
                       </div>
-                      <div>
+                      <div className={classes.space}>
                         <Typography variant="body2" className={clsx(classes.dInline, classes.subheader)}>Last Payment Dt</Typography>
                         <Typography variant="body1" className={classes.dInline}>{paymentArray.length ? paymentArray[0].toc : ''}</Typography>
                       </div>
@@ -186,16 +190,12 @@ class TenantDashboard extends Component {
                   </Grid>
                 </Grid>
               </Grid>
-
               <Grid item xs={12} md={12} lg={12}>
                 <PaymentHistory
                   payment={paymentArray}
                 />
               </Grid>
-
             </Grid>
-
-
           </Container>
         </main>
       </div >

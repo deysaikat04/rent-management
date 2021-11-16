@@ -158,8 +158,8 @@ class AddTenant extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let toDate = moment().add(this.state.form.tenure, 'months').format("DD-MMMM-YYYY").toString();
-        let fromDate = moment(this.state.form.fromDate).format("DD-MMMM-YYYY").toString();
+        let toDate = moment().add(this.state.form.tenure, 'months').format("DD-MM-YYYY").toString();
+        let fromDate = moment(this.state.form.fromDate).format("DD-MM-YYYY").toString();
         this.setState({
             form: { ...this.state.form, toDate, fromDate }
         }, () => {
@@ -286,7 +286,7 @@ class AddTenant extends Component {
                             onChange={this.handleTenureChange}
                             InputLabelProps={{ shrink: true }}
                             helperText={
-                                fromDate && tenure ? `Contract end date ${moment().add(tenure, 'months').format("DD-MMMM-YYYY")}`
+                                fromDate && tenure ? `Contract end date ${moment().add(tenure, 'months').format("DD-MM-YYYY")}`
                                     : 'Please enter the number of months'
                             }
                             fullWidth

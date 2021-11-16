@@ -53,7 +53,7 @@ class PaymentDialog extends Component {
         unitConsumed: 0,
         electricBill: 0,
         total: 0,
-        toc: moment().format("DD-MMMM-YYYY"),
+        toc: moment().format("DD-MM-YYYY"),
         note: "",
       },
       tenantObj: {},
@@ -65,6 +65,12 @@ class PaymentDialog extends Component {
       fieldDisabled: true,
       currentUnitErr: false,
     };
+  }
+
+  handlestarTingUnitChange = (event) => {
+    this.setState({
+      startingUnit: event.target.value
+    })
   }
 
   handleTenantSelectChange = (event) => {
@@ -115,10 +121,6 @@ class PaymentDialog extends Component {
       this.setState({
         form: { ...this.state.form, [name]: value, rentAmount: rentAmnt },
       });
-    } else {
-      this.setState({
-        form: { ...this.state.form, [name]: value },
-      });
     }
   };
 
@@ -139,9 +141,8 @@ class PaymentDialog extends Component {
     const { rentAmount } = this.state.form;
     const unitConsumed = value - startingUnit;
     const electricBill = unitConsumed * chargePerUnit;
-    const total = electricBill + rentAmount;
-
-    if (startingUnit && value <= startingUnit) {
+    const total = electricBill + rentAmount;    
+    if (startingUnit && Number(value) <= Number(startingUnit)) {
       this.setState({
         form: {
           ...this.state.form,
@@ -258,8 +259,8 @@ class PaymentDialog extends Component {
               name="prevUnit"
               label="Previous Unit*"
               value={startingUnit}
+              onChange={this.handlestarTingUnitChange}
               fullWidth
-              disabled={fieldDisabled}
             />
           </Grid>
           <Grid item xs={6} md={6} lg={6}>
@@ -270,7 +271,7 @@ class PaymentDialog extends Component {
               margin="dense"
               id="currentUnit"
               name="currentUnit"
-              label="Current Unit"
+              label="Current Unit*"
               value={currentUnit}
               onChange={this.handleUnitChange}
               fullWidth
