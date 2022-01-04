@@ -20,7 +20,6 @@ export const removeTenant = (id) => {
 
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         //make async calls to DB
-        //console.log(projectId)
         const firestore = getFirestore();
         firestore.collection('tenants').doc(id).delete().then(() => {
             dispatch({ type: 'TENANT_DELETED' });

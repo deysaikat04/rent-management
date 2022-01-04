@@ -34,7 +34,7 @@ const styles = (theme) => ({
   },
   total: {
     fontSize: "1.25rem",
-    fontWeight: 600
+    fontWeight: 600,
   },
 });
 
@@ -69,9 +69,9 @@ class PaymentDialog extends Component {
 
   handlestarTingUnitChange = (event) => {
     this.setState({
-      startingUnit: event.target.value
-    })
-  }
+      startingUnit: event.target.value,
+    });
+  };
 
   handleTenantSelectChange = (event) => {
     this.setState({ tenantName: event.target.value, fieldDisabled: false });
@@ -141,7 +141,7 @@ class PaymentDialog extends Component {
     const { rentAmount } = this.state.form;
     const unitConsumed = value - startingUnit;
     const electricBill = unitConsumed * chargePerUnit;
-    const total = electricBill + rentAmount;    
+    const total = electricBill + rentAmount;
     if (startingUnit && Number(value) <= Number(startingUnit)) {
       this.setState({
         form: {
@@ -182,6 +182,7 @@ class PaymentDialog extends Component {
       note,
     } = this.state.form;
     const { classes, tenants, handleDialogClose } = this.props;
+    const btnDisabled = total === 0 || fieldDisabled || currentUnitErr;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -345,7 +346,7 @@ class PaymentDialog extends Component {
                 color="secondary"
                 className={classes.buttonSave}
                 size="small"
-                disabled={fieldDisabled || currentUnitErr}
+                disabled={btnDisabled}
               >
                 Save
               </Button>
