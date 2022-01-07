@@ -35,7 +35,6 @@ export default function TenantCard(props) {
     return (
         <Card className={classes.card} onClick={() => props.showTenant(tenant.id)}>
             <CardContent>
-
                 <Typography variant="h5" component="h2" gutterBottom>
                     {tenant.name}
                 </Typography>
