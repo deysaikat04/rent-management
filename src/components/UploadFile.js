@@ -6,19 +6,15 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import LoadingButton from "@mui/lab/LoadingButton";
 import DoneIcon from "@mui/icons-material/Done";
-import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@mui/material/Avatar";
 import { connect } from "react-redux";
 import pdfIcon from "../pdf_icon.png";
 import {
   projectStorage,
-  projectFirestore,
-  timestamp,
 } from "../config/fbConfig";
-import { addDocs } from "../store/actions/documentAction";
+import { addDocs, fetchDocs } from "../store/actions/documentAction";
 
 const styles = (theme) => ({
   header: {
@@ -49,6 +45,13 @@ const styles = (theme) => ({
   fileName: {
     margin: "15px 0",
   },
+  uploadedItems: {
+    marginTop: "16px",
+    padding: "10px",
+    width: "250px",
+    height: "300px",
+    objectFit: 'contain'
+  },
 });
 
 class UploadFile extends Component {
@@ -59,16 +62,13 @@ class UploadFile extends Component {
     progress: 0,
     error: null,
     url: "",
-    docs: null,
+    documents: [],
   };
-  componentDidMount = () => {
-    const { tenantId, documents } = this.props;
-    const documentObj = documents.filter((_) => _.id === tenantId)[0];
-    this.setState({
-      docs: documentObj
-    })
 
-  }
+  componentDidMount = () => {
+    this.props.fetchDocs(this.props.userId, this.props.tenantId);
+  };
+
   componentWillUnmount = () => {
     URL.revokeObjectURL(this.state.preview);
   };
@@ -90,9 +90,10 @@ class UploadFile extends Component {
   };
 
   uploadFile = () => {
-    const { selectedFile, docs } = this.state;
-    const {userId, tenantId} = this.props;
+    const { selectedFile, fileType } = this.state;
+    const { userId, tenantId, files } = this.props;
     const storageRef = projectStorage.ref(selectedFile.name);
+    let uploadObj;
 
     storageRef.put(selectedFile).on(
       "state_changed",
@@ -105,9 +106,18 @@ class UploadFile extends Component {
       },
       async () => {
         const url = await storageRef.getDownloadURL();
-        // getImageUrl(url);
-        const uploadObj = [...docs.docs, url];
+        let newObj = {
+          type: fileType,
+          url,
+          name: selectedFile.name,
+        };
+        if (files.length) {
+          uploadObj = [newObj, ...files];
+        } else {
+          uploadObj = [newObj];
+        }
         this.props.addDocs(uploadObj, userId, tenantId);
+        this.props.fetchDocs(userId, tenantId);
         this.setState({ url });
         this.reset();
       }
@@ -126,13 +136,13 @@ class UploadFile extends Component {
   };
 
   render() {
-    const { classes, documents } = this.props;
-    const { selectedFile, preview, fileType, progress, docs, error, url } =
+    const { classes, files } = this.props;
+    const { selectedFile, preview, fileType, progress } =
       this.state;
     return (
       <div>
         <Grid container spacing={3}>
-          <Grid item xs={3} md={2} lg={2}>
+          <Grid item xs={3} md={2} lg={2} style={{marginBottom: "16px"}}>
             <input
               type="file"
               style={{ display: "none" }}
@@ -162,7 +172,7 @@ class UploadFile extends Component {
               >
                 <div>
                   {fileType === "pdf" ? (
-                    <img src={pdfIcon} alt="" width="40" height="50" />
+                    <img src={pdfIcon} alt="pdf_icon" width="40" height="50" />
                   ) : (
                     <Avatar
                       alt="Remy Sharp"
@@ -212,15 +222,51 @@ class UploadFile extends Component {
                     <DoneIcon />
                   </LoadingButton>
                 )}
-              </Grid> 
+              </Grid>
             </>
           )}
         </Grid>
 
-        {docs && docs.docs.map(item => (
-          
-          <img src={item} alt="" width="156" height="256"/>
-        ))}
+        <Grid container spacing={3}>
+          {files &&
+            files.map((item) =>
+              item.type === "image" ? (
+                <Grid item xs={12} sm={6} md={3} lg={3} style={{textAlign: "center"}}>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer nooperner"
+                    className={classes.uploadedItems}
+                  >
+                    <img
+                      src={item.url}
+                      alt="tenant_files"
+                      className={classes.uploadedItems}
+                    />
+                  </a>
+                </Grid>
+              ) : (
+                <Grid item xs={12} sm={6} md={3} lg={3} style={{textAlign: "center"}}>
+                  <div style={{ marginTop: "20px" }}>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer nooperner"
+                      className={classes.uploadedItems}
+                    >
+                      <img
+                        src={pdfIcon}
+                        alt="pdf_icon"
+                        width="140"
+                        height="150"
+                      />
+                    </a>
+                    <p>{item.name}</p>
+                  </div>
+                </Grid>
+              )
+            )}
+        </Grid>
       </div>
     );
   }
@@ -228,7 +274,7 @@ class UploadFile extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    documents: state.firestore.ordered.documents,
+    files: state.documents.files,
   };
 };
 
@@ -236,19 +282,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addDocs: (uploadObj, userId, tenantId) =>
       dispatch(addDocs(uploadObj, userId, tenantId)),
+    fetchDocs: (userId, tenantId) => dispatch(fetchDocs(userId, tenantId)),
   };
 };
 
 export default withStyles(styles, { withTheme: true })(
-  compose(
-    connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect((props) => {
-      return [
-        {
-          collection: "documents",
-          where: ["userId", "==", props.userId],
-        },
-      ];
-    })
-  )(UploadFile)
+  compose(connect(mapStateToProps, mapDispatchToProps))(UploadFile)
 );

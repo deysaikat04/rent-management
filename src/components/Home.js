@@ -124,10 +124,9 @@ class Home extends Component {
   };
 
   showTenant = (tenantId) => {
-    const { tenants, documents } = this.props;
+    const { tenants } = this.props;
     let paymentArray = [];
     const tenantObj = tenants.filter((_) => _.id === tenantId)[0];
-    const documentObj = documents.filter((_) => _.id === tenantId)[0];
 
     for (let index in tenantObj.payments) {
       paymentArray.push(tenantObj.payments[index]);
@@ -136,7 +135,6 @@ class Home extends Component {
       selectedTenant: tenantObj,
       showTenantHistory: true,
       paymentArray,
-      docs: documentObj
     });
   };
 
@@ -148,7 +146,6 @@ class Home extends Component {
       showTenantHistory,
       selectedTenant,
       paymentArray,
-      docs,
     } = this.state;
     if (showTenantHistory) {
       return (
@@ -158,7 +155,6 @@ class Home extends Component {
             state: {
               selectedTenant: selectedTenant,
               paymentArray: paymentArray,
-              documents: docs,
             },
           }}
         />
@@ -286,7 +282,6 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     tenants: state.firestore.ordered.tenants,
-    documents: state.firestore.ordered.documents,
     hasError: state.tenants.error,
     hasPaymentError: state.payment.error,
   };
@@ -307,11 +302,7 @@ export default withStyles(styles, { withTheme: true })(
         {
           collection: "tenants",
           where: ["userId", "==", props.userid],
-        },
-        {
-          collection: "documents",
-          where: ["userId", "==", props.userid],
-        },
+        }
       ];
     })
   )(Home)

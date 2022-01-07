@@ -1,6 +1,7 @@
 const initState = {
     error: true,
-    msg: ''
+    files: [],
+    msg: '',
 }
 
 const documentReducer = (state = initState, action) => {
@@ -15,6 +16,21 @@ const documentReducer = (state = initState, action) => {
             state = {
                 error: true,
                 msg: action.payload
+            }
+            return state
+
+        case 'FETCH_DOCUMENT':
+            state = {
+                error: false,
+                files: [...action.payload],
+            }
+            return state
+
+        case 'FETCH_DOCUMENT_ERROR':
+            state = {
+                error: true,
+                msg: action.payload,
+                files: [],
             }
             return state
 

@@ -3,7 +3,7 @@ export const addUser = (userId) => {
         //make async calls to DB
         const firestore = getFirestore();
         firestore.collection('users').add({
-            ...userId,
+            userId,
             toc: new Date()
         }).then(() => {
             dispatch({ type: 'ADD_USER', payload: userId });

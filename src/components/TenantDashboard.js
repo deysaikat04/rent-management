@@ -103,7 +103,7 @@ class TenantDashboard extends Component {
   };
   render() {
     const { classes } = this.props;
-    const { selectedTenant, paymentArray, documents } = this.props.location.state;
+    const { selectedTenant, paymentArray } = this.props.location.state;
     return (
       <div className={classes.root}>
         <CssBaseline />

@@ -368,7 +368,6 @@ class PaymentDialog extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    payment: state.firestore.ordered.payment,
     tenants: state.firestore.ordered.tenants,
   };
 };
@@ -383,6 +382,13 @@ const mapDispatchToProps = (dispatch) => {
 export default withStyles(styles, { withTheme: true })(
   compose(
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect([{ collection: "payment" }, { collection: "tenants" }])
+    firestoreConnect((props) => {
+      return [
+        {
+          collection: "tenants",
+          where: ["userId", "==", props.userid],
+        },
+      ];
+    })
   )(PaymentDialog)
 );
