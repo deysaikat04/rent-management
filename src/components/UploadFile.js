@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { v4 as uuidv4 } from "uuid";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
@@ -6,14 +7,15 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import LoadingButton from "@mui/lab/LoadingButton";
 import DoneIcon from "@mui/icons-material/Done";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import { compose } from "redux";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@mui/material/Avatar";
 import { connect } from "react-redux";
 import pdfIcon from "../pdf_icon.png";
-import {
-  projectStorage,
-} from "../config/fbConfig";
+import { projectStorage } from "../config/fbConfig";
 import { addDocs, fetchDocs } from "../store/actions/documentAction";
 
 const styles = (theme) => ({
@@ -45,12 +47,30 @@ const styles = (theme) => ({
   fileName: {
     margin: "15px 0",
   },
+  uploadedImage: {
+    width: "250px",
+    height: "300px",
+    objectFit: "contain",
+    padding: "16px",
+    border: "1px solid #eee",
+  },
   uploadedItems: {
     marginTop: "16px",
     padding: "10px",
-    width: "250px",
-    height: "300px",
-    objectFit: 'contain'
+  },
+  loader: {
+    display: "flex",
+    justifyContent: "center",
+    padding: "16px",
+  },
+  remove: {
+    position: "relative",
+    top: "30px",
+    right: "50px",
+    textAlign: "right",
+  },
+  removeIcon: {
+    color: "#e57373",
   },
 });
 
@@ -63,6 +83,7 @@ class UploadFile extends Component {
     error: null,
     url: "",
     documents: [],
+    uploading: false,
   };
 
   componentDidMount = () => {
@@ -95,6 +116,8 @@ class UploadFile extends Component {
     const storageRef = projectStorage.ref(selectedFile.name);
     let uploadObj;
 
+    this.setState({ uploading: true });
+
     storageRef.put(selectedFile).on(
       "state_changed",
       (snap) => {
@@ -107,6 +130,7 @@ class UploadFile extends Component {
       async () => {
         const url = await storageRef.getDownloadURL();
         let newObj = {
+          id: uuidv4(),
           type: fileType,
           url,
           name: selectedFile.name,
@@ -124,6 +148,25 @@ class UploadFile extends Component {
     );
   };
 
+  removeFile = (item) => {
+    const { userId, tenantId, files } = this.props;
+
+    const updatedList = files.filter((file) => file.id !== item.id);
+
+    try {
+      let imageRef = projectStorage.refFromURL(item.url);
+      imageRef.delete();
+    } catch (error) {
+      console.log(error);
+    }
+
+    this.props.addDocs(updatedList, userId, tenantId);
+
+    setTimeout(() => {
+      this.props.fetchDocs(userId, tenantId);
+    }, 1500);
+  };
+
   reset = () => {
     this.setState({
       selectedFile: null,
@@ -132,17 +175,17 @@ class UploadFile extends Component {
       progress: 0,
       error: null,
       url: "",
+      uploading: false,
     });
   };
 
   render() {
     const { classes, files } = this.props;
-    const { selectedFile, preview, fileType, progress } =
-      this.state;
+    const { selectedFile, preview, fileType, progress, uploading } = this.state;
     return (
       <div>
         <Grid container spacing={3}>
-          <Grid item xs={3} md={2} lg={2} style={{marginBottom: "16px"}}>
+          <Grid item xs={3} md={2} lg={2} style={{ marginBottom: "16px" }}>
             <input
               type="file"
               style={{ display: "none" }}
@@ -226,28 +269,33 @@ class UploadFile extends Component {
             </>
           )}
         </Grid>
-
-        <Grid container spacing={3}>
-          {files &&
-            files.map((item) =>
-              item.type === "image" ? (
-                <Grid item xs={12} sm={6} md={3} lg={3} style={{textAlign: "center"}}>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer nooperner"
-                    className={classes.uploadedItems}
+        {uploading && selectedFile ? (
+          <Box className={classes.loader}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Grid container spacing={3}>
+            {files &&
+              files.map((item) =>
+                item.type === "image" ? (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    lg={3}
+                    style={{ textAlign: "center" }}
+                    key={item.id}
                   >
-                    <img
-                      src={item.url}
-                      alt="tenant_files"
-                      className={classes.uploadedItems}
-                    />
-                  </a>
-                </Grid>
-              ) : (
-                <Grid item xs={12} sm={6} md={3} lg={3} style={{textAlign: "center"}}>
-                  <div style={{ marginTop: "20px" }}>
+                    <div className={classes.remove}>
+                      <IconButton
+                        aria-label="upload picture"
+                        component="p"
+                        onClick={() => this.removeFile(item)}
+                      >
+                        <HighlightOffIcon className={classes.removeIcon} />
+                      </IconButton>
+                    </div>
                     <a
                       href={item.url}
                       target="_blank"
@@ -255,18 +303,43 @@ class UploadFile extends Component {
                       className={classes.uploadedItems}
                     >
                       <img
-                        src={pdfIcon}
-                        alt="pdf_icon"
-                        width="140"
-                        height="150"
+                        src={item.url}
+                        alt="tenant_files"
+                        className={classes.uploadedImage}
                       />
                     </a>
-                    <p>{item.name}</p>
-                  </div>
-                </Grid>
-              )
-            )}
-        </Grid>
+                  </Grid>
+                ) : (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    lg={3}
+                    style={{ textAlign: "center" }}
+                    key={item.id}
+                  >
+                    <div style={{ marginTop: "20px" }}>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noreferrer nooperner"
+                        className={classes.uploadedItems}
+                      >
+                        <img
+                          src={pdfIcon}
+                          alt="pdf_icon"
+                          width="140"
+                          height="150"
+                        />
+                      </a>
+                      <p>{item.name}</p>
+                    </div>
+                  </Grid>
+                )
+              )}
+          </Grid>
+        )}
       </div>
     );
   }

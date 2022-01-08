@@ -28,6 +28,7 @@ export const fetchDocs = (userId, tenantId) => {
     const firestore = getFirestore();
     let alldocumentArray = [];
     let docsOfTenant = [];
+    let noData = false;
 
     firestore
       .collection("documents")
@@ -43,16 +44,15 @@ export const fetchDocs = (userId, tenantId) => {
               const documentObj = alldocumentArray.filter(
                 (_) => _.tenantId === tenantId
               )[0];
-
               for (let item in documentObj.docs) {
                 tenantDocumentArr.push(documentObj.docs[item]);
               }
-
+              if (tenantDocumentArr.length === 0) noData = true;
               docsOfTenant = tenantDocumentArr;
             }
           }
         });
-        if (docsOfTenant.length)
+        if (docsOfTenant.length || noData)
           dispatch({ type: "FETCH_DOCUMENT", payload: docsOfTenant });
       })
       .catch((err) => {
