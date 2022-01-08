@@ -18,6 +18,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { deepOrange, green } from "@mui/material/colors";
 import UploadFile from "./UploadFile";
 
 const styles = (theme) => ({
@@ -132,9 +133,9 @@ class TenantDashboard extends Component {
                   <Grid item xs={10} md={10} lg={10}>
                     <div style={{ display: "flex" }}>
                       <Avatar
-                        alt="Remy Sharp"
-                        src="/static/images/avatar/1.jpg"
-                        sx={{ mr: 2 }}
+                        sx={{ bgcolor: green[400], mr: 2 }}
+                        alt={selectedTenant.name}
+                        src="/abc.jpg"
                       />
                       <Typography variant="h6" id="tableTitle">
                         {selectedTenant.name}
@@ -422,7 +423,7 @@ class TenantDashboard extends Component {
                       >
                         <Typography>Documents</Typography>
                       </AccordionSummary>
-                      <AccordionDetails>                        
+                      <AccordionDetails>
                         <UploadFile
                           userId={this.props.userid}
                           tenantId={selectedTenant.id}
