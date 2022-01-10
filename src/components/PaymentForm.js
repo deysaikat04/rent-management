@@ -132,7 +132,7 @@ class PaymentDialog extends Component {
       this.state.tenantId,
       this.props.userid
     );
-    this.props.handleDialogClose();
+    this.props.dialogAction("", false);
   };
 
   handleUnitChange = (event) => {
@@ -181,7 +181,7 @@ class PaymentDialog extends Component {
       noOfMonths,
       note,
     } = this.state.form;
-    const { classes, tenants, handleDialogClose } = this.props;
+    const { classes, tenants } = this.props;
     const btnDisabled = total === 0 || fieldDisabled || currentUnitErr;
 
     return (
@@ -341,22 +341,22 @@ class PaymentDialog extends Component {
           <Grid item xs={12} md={12} lg={12}>
             <div className={classes.button}>
               <Button
+                type="reset"
+                variant="outlined"
+                color="dafult"
+                size="small"
+                className={classes.buttonSave}
+              >
+                Reset
+              </Button>
+              <Button
                 type="submit"
                 variant="contained"
                 color="secondary"
-                className={classes.buttonSave}
                 size="small"
                 disabled={btnDisabled}
               >
                 Save
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                size="small"
-                onClick={() => handleDialogClose()}
-              >
-                Cancel
               </Button>
             </div>
           </Grid>

@@ -28,23 +28,23 @@ class DialogComponent extends Component {
     super(props);
     this.state = {};
   }
+
+  dialogAction = (type, shouldOpen) => {
+    this.props.handleDialogState(type, shouldOpen);
+  };
+
   render() {
-    const {
-      classes,
-      userid,
-      title,
-      openDialog,
-      handleDialogClose,
-      dialogType,
-    } = this.props;
-    const isPaymentDialog = dialogType === "payment";
+    const { classes, userid, dialogState } = this.props;
+    const title =
+      dialogState.dialogType === "payment" ? "Add Payment" : "Add Tenant";
+    const isPaymentDialog = dialogState.dialogType === "payment";
     return (
       <Dialog
-        open={openDialog}
+        open={Boolean(dialogState.shouldOpen)}
         TransitionComponent={Transition}
         keepMounted
         maxWidth={"sm"}
-        onClose={handleDialogClose}
+        onClose={() => this.dialogAction("", false)}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
@@ -56,19 +56,16 @@ class DialogComponent extends Component {
           <IconButton
             aria-label="close"
             className={classes.closeButton}
-            onClick={handleDialogClose}
+            onClick={() => this.dialogAction("", false)}
           >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
           {isPaymentDialog ? (
-            <PaymentForm
-              userid={userid}
-              handleDialogClose={handleDialogClose}
-            />
+            <PaymentForm userid={userid} dialogAction={this.dialogAction} />
           ) : (
-            <AddTenant userid={userid} handleDialogClose={handleDialogClose} />
+            <AddTenant userid={userid} dialogAction={this.dialogAction} />
           )}
         </DialogContent>
       </Dialog>

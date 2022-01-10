@@ -20,6 +20,8 @@ import TenantDashboard from "./TenantDashboard";
 import TenantCard from "./TenantCard";
 import { resetState } from "../store/actions/tenantAction";
 import { resetPaymentState } from "../store/actions/paymentActions";
+import Navbar from "./Navbar";
+import Bar from "./Bar";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -139,7 +141,15 @@ class Home extends Component {
   };
 
   render() {
-    const { classes, userid, tenants, hasError, hasPaymentError } = this.props;
+    const {
+      classes,
+      userid,
+      tenants,
+      hasError,
+      hasPaymentError,
+      dialogState,
+      handleDialogState,
+    } = this.props;
     const {
       openDialog,
       dialogType,
@@ -147,6 +157,7 @@ class Home extends Component {
       selectedTenant,
       paymentArray,
     } = this.state;
+
     if (showTenantHistory) {
       return (
         <Redirect
@@ -164,116 +175,129 @@ class Home extends Component {
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
+        {/* <Navbar authed={authed} /> */}
+        {/* <Bar handleDialogOpen={this.handleDialogOpen} /> */}
 
-          <Container maxWidth="lg" className={classes.container}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={12} lg={12}>
-                      <div className={classes.titleWithBtn}>
-                        <Typography variant="h6">Current Tenants:</Typography>
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          className={classes.button}
-                          startIcon={<AddIcon />}
-                          size="small"
-                          onClick={() => this.handleDialogOpen("tenant")}
-                        >
-                          Tenant
-                        </Button>
-                      </div>
-                    </Grid>
+        {/* {showTenantHistory && <TenantDashboard />} */}
+        {!showTenantHistory && (
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} />
 
-                    <Grid item xs={12} md={12} lg={12}>
-                      <Grid container spacing={3}>
-                        {tenants &&
-                          tenants.map((tenant) => {
-                            return (
-                              <Grid
-                                item
-                                xs={12}
-                                sm={6}
-                                md={4}
-                                lg={3}
-                                key={tenant.id}
-                              >
-                                <TenantCard
-                                  tenant={tenant}
-                                  showTenant={this.showTenant}
-                                />
-                              </Grid>
-                            );
-                          })}
+            <Container maxWidth="lg" className={classes.container}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={12} lg={12}>
+                  <Paper className={classes.paper}>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12} md={12} lg={12}>
+                        <div className={classes.titleWithBtn}>
+                          <Typography variant="h6">Current Tenants:</Typography>
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            className={classes.button}
+                            startIcon={<AddIcon />}
+                            size="small"
+                            onClick={() => this.handleDialogOpen("tenant")}
+                          >
+                            Tenant
+                          </Button>
+                        </div>
+                      </Grid>
+
+                      <Grid item xs={12} md={12} lg={12}>
+                        <Grid container spacing={3}>
+                          {tenants &&
+                            tenants.map((tenant) => {
+                              return (
+                                <Grid
+                                  item
+                                  xs={12}
+                                  sm={6}
+                                  md={4}
+                                  lg={3}
+                                  key={tenant.id}
+                                >
+                                  <TenantCard
+                                    tenant={tenant}
+                                    showTenant={this.showTenant}
+                                  />
+                                </Grid>
+                              );
+                            })}
+                        </Grid>
                       </Grid>
                     </Grid>
-                  </Grid>
-                </Paper>
+                  </Paper>
+                </Grid>
+
+                <Grid item xs={12} md={12} lg={12}>
+                  {showTenantHistory ? (
+                    <TenantDashboard
+                      selectedTenant={selectedTenant}
+                      paymentArray={paymentArray}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Grid>
               </Grid>
 
-              <Grid item xs={12} md={12} lg={12}>
-                {showTenantHistory ? (
-                  <TenantDashboard
-                    selectedTenant={selectedTenant}
-                    paymentArray={paymentArray}
-                  />
-                ) : (
-                  <></>
-                )}
-              </Grid>
-            </Grid>
-
-            <Fab
-              color="secondary"
-              aria-label="add"
-              className={classes.fabButton}
-              onClick={() => this.handleDialogOpen("payment")}
-            >
-              <AddIcon />
-            </Fab>
-            <footer>
-              <Copyright />
-            </footer>
-            {openDialog ? (
-              <DialogComponent
-                openDialog={openDialog}
-                handleDialogClose={this.handleDialogClose}
-                title={dialogType === "payment" ? "Add Payment" : "Add Tenant"}
+              <Fab
+                color="secondary"
+                aria-label="add"
+                className={classes.fabButton}
+                onClick={() => this.handleDialogOpen("payment")}
+              >
+                <AddIcon />
+              </Fab>
+              <footer>
+                <Copyright />
+              </footer>
+              {/* <DialogComponent
                 userid={userid}
-                dialogType={dialogType}
-              />
-            ) : (
-              <></>
-            )}
-            {!hasError ? (
-              <Snackbar
-                open={!hasError}
-                autoHideDuration={2000}
-                onClose={this.handleAlertClose}
-                style={{ marginBottom: "32px" }}
-              >
-                <Alert onClose={this.handleAlertClose} severity={"success"}>
-                  Tenant added successfully!
-                </Alert>
-              </Snackbar>
-            ) : null}
-            {!hasPaymentError ? (
-              <Snackbar
-                open={!hasPaymentError}
-                autoHideDuration={2000}
-                onClose={this.handleAlertClose}
-                style={{ marginBottom: "32px" }}
-              >
-                <Alert onClose={this.handleAlertClose} severity={"success"}>
-                  Payment added successfully!
-                </Alert>
-              </Snackbar>
-            ) : null}
-          </Container>
-        </main>
+                dialogState={dialogState}
+                handleDialogState={handleDialogState}
+              /> */}
+              {/* {openDialog ? (
+                <DialogComponent
+                  openDialog={openDialog}
+                  handleDialogClose={this.handleDialogClose}
+                  title={
+                    dialogType === "payment" ? "Add Payment" : "Add Tenant"
+                  }
+                  userid={userid}
+                  dialogType={dialogType}
+                />
+              ) : (
+                <></>
+              )} */}
+              {!hasError ? (
+                <Snackbar
+                  open={!hasError}
+                  autoHideDuration={2000}
+                  onClose={this.handleAlertClose}
+                  style={{ marginBottom: "32px" }}
+                >
+                  <Alert onClose={this.handleAlertClose} severity={"success"}>
+                    Tenant added successfully!
+                  </Alert>
+                </Snackbar>
+              ) : null}
+              {!hasPaymentError ? (
+                <Snackbar
+                  open={!hasPaymentError}
+                  autoHideDuration={2000}
+                  onClose={this.handleAlertClose}
+                  style={{ marginBottom: "32px" }}
+                >
+                  <Alert onClose={this.handleAlertClose} severity={"success"}>
+                    Payment added successfully!
+                  </Alert>
+                </Snackbar>
+              ) : null}
+            </Container>
+          </main>
+        )}
       </div>
     );
   }
@@ -302,7 +326,7 @@ export default withStyles(styles, { withTheme: true })(
         {
           collection: "tenants",
           where: ["userId", "==", props.userid],
-        }
+        },
       ];
     })
   )(Home)

@@ -18,7 +18,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { deepOrange, green } from "@mui/material/colors";
+import { green } from "@mui/material/colors";
 import UploadFile from "./UploadFile";
 
 const styles = (theme) => ({
@@ -106,8 +106,7 @@ class TenantDashboard extends Component {
     const { classes } = this.props;
     const { selectedTenant, paymentArray } = this.props.location.state;
     return (
-      <div className={classes.root}>
-        <CssBaseline />
+      
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
 
@@ -130,7 +129,7 @@ class TenantDashboard extends Component {
               <Grid item xs={12} md={12} lg={12}>
                 {/* inner grid  */}
                 <Grid container spacing={3}>
-                  <Grid item xs={10} md={10} lg={10}>
+                  <Grid item xs={8} md={10} lg={10}>
                     <div style={{ display: "flex" }}>
                       <Avatar
                         sx={{ bgcolor: green[400], mr: 2 }}
@@ -142,7 +141,7 @@ class TenantDashboard extends Component {
                       </Typography>
                     </div>
                   </Grid>
-                  <Grid item xs={2} md={2} lg={2}>
+                  <Grid item xs={4} md={2} lg={2} style={{textAlign: "right"}}>
                     <Button
                       variant="outlined"
                       color="secondary"
@@ -439,7 +438,6 @@ class TenantDashboard extends Component {
             </Grid>
           </Container>
         </main>
-      </div>
     );
   }
 }

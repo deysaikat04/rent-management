@@ -1,28 +1,29 @@
-import React from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/core';
-import Home from './components/Home';
-import Login from './components/Login';
+import React from "react";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/core";
+import Home from "./components/Home";
+import Login from "./components/Login";
 import Cookies from "js-cookie";
 import Navbar from "./components/Navbar";
 import TenantDashboard from "./components/TenantDashboard";
+import Bar from "./components/Bar";
 
 export const light = {
   palette: {
-    type: 'light',
+    type: "light",
     primary: {
-      main: '#222629',
-      mainSecondary: '#474b4f'
+      main: "#222629",
+      mainSecondary: "#474b4f",
     },
     secondary: {
-      main: '#43a047',
+      main: "#43a047",
     },
   },
   typography: {
-    color: '#000000'
-  }
-}
+    color: "#000000",
+  },
+};
 
 function PrivateRoute({ component: Component, authed, userid, ...rest }) {
   return (
@@ -30,12 +31,14 @@ function PrivateRoute({ component: Component, authed, userid, ...rest }) {
       {...rest}
       render={(props) =>
         authed === true ? (
-          <Component {...props} authed={authed} userid={userid} />
+          <>
+            <Component {...props} {...rest} authed={authed} userid={userid} />
+          </>
         ) : (
-            <Redirect
-              to={{ pathname: "/login", state: { from: props.location } }}
-            />
-          )
+          <Redirect
+            to={{ pathname: "/login", state: { from: props.location } }}
+          />
+        )
       }
     />
   );
@@ -46,19 +49,41 @@ function App(props) {
   const userid = Cookies.get("userid");
   const authed = userid !== undefined;
 
+  const [dialogState, setDialogState] = React.useState({
+    shouldOpen: false,
+    dialogType: "",
+  });
+
+  const handleDialogState = (type, shouldOpen) => {
+    setDialogState({
+      shouldOpen,
+      dialogType: type,
+    });
+  };
 
   return (
     <ThemeProvider theme={appliedTheme}>
       <BrowserRouter>
-        <Navbar authed={authed} />
+        {/* <Navbar authed={authed} /> */}
+        <Bar
+          authed={authed}
+          dialogState={dialogState}
+          handleDialogState={handleDialogState}
+        />
         <Switch>
-          <Route exact path='/' render={(props) => <Redirect to={'/login'} />} />
-          <Route exact path='/login' render={(props) => <Login {...props} />} />
+          <Route
+            exact
+            path="/"
+            render={(props) => <Redirect to={"/login"} />}
+          />
+          <Route exact path="/login" render={(props) => <Login {...props} />} />
           <PrivateRoute
             exact
             path="/dashboard"
             authed={authed}
             userid={userid}
+            dialogState={dialogState}
+            handleDialogState={handleDialogState}
             component={Home}
           />
           <PrivateRoute
@@ -66,6 +91,8 @@ function App(props) {
             path="/history"
             authed={authed}
             userid={userid}
+            dialogState={dialogState}
+            handleDialogState={handleDialogState}
             component={TenantDashboard}
           />
         </Switch>
@@ -74,5 +101,4 @@ function App(props) {
   );
 }
 
-
-export default (App);
+export default App;
