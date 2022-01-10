@@ -58,7 +58,7 @@ class AddTenant extends Component {
         advancedAmount: "",
         payments: {},
         imgUrl: "",
-        note:'',
+        note: "",
       },
       formError: {
         fromDate: false,
@@ -84,14 +84,12 @@ class AddTenant extends Component {
       }
       case "text":
       case "textarea": {
-        if (value !== "") {
-          this.setState({
-            form: {
-              ...this.state.form,
-              [name]: value,
-            },
-          });
-        }
+        this.setState({
+          form: {
+            ...this.state.form,
+            [name]: value,
+          },
+        });
         break;
       }
       default:
@@ -192,7 +190,7 @@ class AddTenant extends Component {
         form: { ...this.state.form, toDate, fromDate },
       },
       () => {
-        this.props.handleDialogClose();
+        this.props.dialogAction("", false);
         this.props.addTenant(this.state.form, this.props.userid);
       }
     );
@@ -210,7 +208,7 @@ class AddTenant extends Component {
   };
 
   render() {
-    const { classes, handleDialogClose } = this.props;
+    const { classes } = this.props;
     const {
       name,
       address,
@@ -461,22 +459,22 @@ class AddTenant extends Component {
           <Grid item xs={12} md={12} lg={12}>
             <div className={classes.button}>
               <Button
+                type="reset"
+                variant="outlined"
+                color="default"
+                size="small"
+                className={classes.buttonSave}
+              >
+                Reset
+              </Button>
+              <Button
                 variant="contained"
                 color="secondary"
-                className={classes.buttonSave}
                 size="small"
                 type="submit"
                 disabled={!btnActive}
               >
                 Save
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                size="small"
-                onClick={() => handleDialogClose()}
-              >
-                Cancel
               </Button>
             </div>
           </Grid>

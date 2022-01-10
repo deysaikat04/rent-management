@@ -343,7 +343,7 @@ class PaymentDialog extends Component {
               <Button
                 type="reset"
                 variant="outlined"
-                color="dafult"
+                color="default"
                 size="small"
                 className={classes.buttonSave}
               >

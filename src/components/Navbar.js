@@ -1,156 +1,181 @@
-import React, { Component } from "react";
-import clsx from "clsx";
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
 import Cookies from "js-cookie";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import DialogComponent from "./DialogComponent";
 
-const drawerWidth = 180;
+const pages = ["Add Payment", "Add Tenant"];
+const settings = ["Logout"];
 
-const styles = (theme) => ({
-  root: {
-    display: "flex",
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: "none",
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: "nowrap",
-  },
-  drawerOpen: {
-    width: drawerWidth,
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerClose: {
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: "hidden",
-    width: theme.spacing(7) + 1,
-    [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(9) + 1,
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  paper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-  },
-  fixedHeight: {
-    height: 240,
-  },
-});
-
-class Home extends Component {
+class Navbar extends React.Component {
   state = {
-    open: false,
+    anchorElNav: null,
+    anchorElUser: null,
   };
 
-  handleDrawerOpen = () => {
-    this.setState({ open: true });
+  handleOpenNavMenu = (event) => {
+    this.setState({ anchorElNav: event.currentTarget });
+  };
+  handleOpenUserMenu = (event) => {
+    this.setState({ anchorElUser: event.currentTarget });
   };
 
-  handleDrawerClose = () => {
-    this.setState({ open: false });
+  handleCloseNavMenu = () => {
+    this.setState({ anchorElNav: null });
+  };
+
+  handleCloseUserMenu = () => {
+    this.setState({ anchorElUser: null });
+  };
+
+  handleNavMenuClick = (type) => {
+    const isPayment = pages[0] === type ? "payment" : "tenant";
+    this.handleCloseNavMenu();
+    this.props.handleDialogState(isPayment, true);
+  };
+
+  handleUserMenu = () => {
+    this.handleCloseNavMenu();
+    this.handleLogout();
   };
 
   handleLogout = () => {
     Cookies.remove("userid", { path: "/" });
     window.location.reload();
   };
-
   render() {
-    const { classes, authed } = this.props;
-    const { open } = this.state;
+    const { anchorElNav, anchorElUser } = this.state;
+    const { classes, authed, dialogState, handleDialogState } = this.props;
+    const userid = Cookies.get("userid");
+    if (!authed) return <></>;
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar
-          position="absolute"
-          className={clsx(classes.appBar, open && classes.appBarShift)}
-        >
-          <Toolbar className={classes.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              className={clsx(
-                classes.menuButton,
-                open && classes.menuButtonHidden
-              )}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              className={classes.title}
-            >
-              {!open ? "RentKhata" : ""}
-            </Typography>
-            {authed && (
-              <div className={classes.menuButton}>
+        <AppBar position="absolute" style={{ background: "#3e3b3b" }}>
+          <Container maxWidth="lg">
+            <Toolbar disableGutters>
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
+              >
+                RentKhata
+              </Typography>
+
+              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
                 <IconButton
-                  aria-label="Log out"
+                  size="large"
+                  aria-label="account of current user"
                   aria-controls="menu-appbar"
-                  onClick={this.handleLogout}
+                  aria-haspopup="true"
+                  onClick={this.handleOpenNavMenu}
                   color="inherit"
                 >
-                  <ExitToAppIcon />
+                  <MenuIcon />
                 </IconButton>
-              </div>
-            )}
-          </Toolbar>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorElNav}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  open={Boolean(anchorElNav)}
+                  onClose={this.handleCloseNavMenu}
+                  sx={{
+                    display: { xs: "block", md: "none" },
+                  }}
+                >
+                  {pages.map((page) => (
+                    <MenuItem
+                      key={page}
+                      onClick={() => this.handleNavMenuClick(page)}
+                    >
+                      <Typography textAlign="center">{page}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+              >
+                RentKhata
+              </Typography>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                {pages.map((page) => (
+                  <Button
+                    key={page}
+                    onClick={() => this.handleNavMenuClick(page)}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </Box>
+
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={this.handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="John Doe">
+                      <PersonOutlineIcon />
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={this.handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem key={setting} onClick={this.handleUserMenu}>
+                      <Typography textAlign="center">{setting}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            </Toolbar>
+          </Container>
         </AppBar>
+        <DialogComponent
+          userid={userid}
+          dialogState={dialogState}
+          handleDialogState={handleDialogState}
+        />
       </div>
     );
   }
 }
-
-export default withStyles(styles, { withTheme: true })(Home);
+export default withStyles(null, { withTheme: true })(Navbar);

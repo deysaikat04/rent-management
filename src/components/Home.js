@@ -20,8 +20,7 @@ import TenantDashboard from "./TenantDashboard";
 import TenantCard from "./TenantCard";
 import { resetState } from "../store/actions/tenantAction";
 import { resetPaymentState } from "../store/actions/paymentActions";
-import Navbar from "./Navbar";
-import Bar from "./Bar";
+import Bar from "./Navbar";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -175,7 +174,6 @@ class Home extends Component {
     return (
       <div className={classes.root}>
         <CssBaseline />
-        {/* <Navbar authed={authed} /> */}
         {/* <Bar handleDialogOpen={this.handleDialogOpen} /> */}
 
         {/* {showTenantHistory && <TenantDashboard />} */}
@@ -190,17 +188,7 @@ class Home extends Component {
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={12} lg={12}>
                         <div className={classes.titleWithBtn}>
-                          <Typography variant="h6">Current Tenants:</Typography>
-                          <Button
-                            variant="outlined"
-                            color="secondary"
-                            className={classes.button}
-                            startIcon={<AddIcon />}
-                            size="small"
-                            onClick={() => this.handleDialogOpen("tenant")}
-                          >
-                            Tenant
-                          </Button>
+                          <Typography variant="h6">Current Tenants:</Typography>                          
                         </div>
                       </Grid>
 
@@ -241,36 +229,10 @@ class Home extends Component {
                   )}
                 </Grid>
               </Grid>
-
-              <Fab
-                color="secondary"
-                aria-label="add"
-                className={classes.fabButton}
-                onClick={() => this.handleDialogOpen("payment")}
-              >
-                <AddIcon />
-              </Fab>
               <footer>
                 <Copyright />
               </footer>
-              {/* <DialogComponent
-                userid={userid}
-                dialogState={dialogState}
-                handleDialogState={handleDialogState}
-              /> */}
-              {/* {openDialog ? (
-                <DialogComponent
-                  openDialog={openDialog}
-                  handleDialogClose={this.handleDialogClose}
-                  title={
-                    dialogType === "payment" ? "Add Payment" : "Add Tenant"
-                  }
-                  userid={userid}
-                  dialogType={dialogType}
-                />
-              ) : (
-                <></>
-              )} */}
+
               {!hasError ? (
                 <Snackbar
                   open={!hasError}

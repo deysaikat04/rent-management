@@ -7,7 +7,7 @@ import Login from "./components/Login";
 import Cookies from "js-cookie";
 import Navbar from "./components/Navbar";
 import TenantDashboard from "./components/TenantDashboard";
-import Bar from "./components/Bar";
+import Bar from "./components/Navbar";
 
 export const light = {
   palette: {
@@ -64,7 +64,6 @@ function App(props) {
   return (
     <ThemeProvider theme={appliedTheme}>
       <BrowserRouter>
-        {/* <Navbar authed={authed} /> */}
         <Bar
           authed={authed}
           dialogState={dialogState}
