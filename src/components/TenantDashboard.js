@@ -11,6 +11,8 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import PaymentHistory from "./PaymentHistory";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 import { connect } from "react-redux";
 import { removeTenant } from "../store/actions/tenantAction";
 import Avatar from "@mui/material/Avatar";
@@ -57,6 +59,12 @@ const styles = (theme) => ({
   },
   subheader: {
     color: "#7b7b7b",
+  },
+  fabButton: {
+    position: "fixed",
+    zIndex: 1,
+    right: 20,
+    bottom: 20,
   },
   link: {
     cursor: "pointer",
@@ -437,6 +445,14 @@ class TenantDashboard extends Component {
               </Grid>
             </Grid>
           </Container>
+          <Fab
+                color="secondary"
+                aria-label="add"
+                className={classes.fabButton}
+                onClick={() => this.props.handleDialogState("payment", true)}
+              >
+                <AddIcon />
+              </Fab>
         </main>
     );
   }

@@ -1,37 +1,49 @@
-
 const initState = {
-    error: true,
-    msg: ''
-}
+  success: false,
+  error: false,
+  msg: "",
+};
 
 const tenantReducer = (state = initState, action) => {
-    switch (action.type) {
-        case 'ADD_TENANT':
-            state = {
-                error: action.payload
-            }
-            return state
+  switch (action.type) {
+    case "ADD_TENANT":
+      state = {
+        error: action.payload,
+        success: true,
+        msg: "",
+      };
+      return state;
 
-        case 'ADD_TENANT_ERROR':
-            state = {
-                error: true,
-                msg: action.payload
-            }
-            return state
+    case "ADD_TENANT_ERROR":
+      state = {
+        error: true,
+        success: true,
+        msg: action.payload,
+      };
+      return state;
 
-        case 'TENANT_DELETED':
-            return state
+    case "TENANT_DELETED":
+      state = {
+        error: false,
+        success: true,
+        msg: "",
+      };
+      return state;
 
-        case 'TENANT_DELETED_ERROR':
-            console.log('Error while deleting project..', action.err);
-            return state
+    case "TENANT_DELETED_ERROR":
+      state = {
+        error: true,
+        success: false,
+        msg: action.err,
+      };
+      return state;
 
-        case 'RESET':
-            return initState
+    case "RESET":
+      return initState;
 
-        default:
-            return state
-    }
-}
+    default:
+      return state;
+  }
+};
 
 export default tenantReducer;

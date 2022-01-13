@@ -10,6 +10,8 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
 import { addPayment } from "../store/actions/paymentActions";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
@@ -64,6 +66,7 @@ class PaymentDialog extends Component {
       prevPayments: [],
       fieldDisabled: true,
       currentUnitErr: false,
+      loading: false,
     };
   }
 
@@ -126,13 +129,16 @@ class PaymentDialog extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    this.setState({ loading: true });
     const newPaymentArr = [{ ...this.state.form }, ...this.state.prevPayments];
     this.props.addPayment(
       newPaymentArr,
       this.state.tenantId,
       this.props.userid
     );
-    this.props.dialogAction("", false);
+    setTimeout(() => {
+      this.props.dialogAction("", false);
+    }, 1500);
   };
 
   handleUnitChange = (event) => {
@@ -171,6 +177,7 @@ class PaymentDialog extends Component {
       startingUnit,
       chargePerUnit,
       currentUnitErr,
+      loading,
     } = this.state;
     const {
       currentUnit,
@@ -349,15 +356,28 @@ class PaymentDialog extends Component {
               >
                 Reset
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                size="small"
-                disabled={btnDisabled}
-              >
-                Save
-              </Button>
+              {!loading && (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  disabled={btnDisabled}
+                >
+                  Save
+                </Button>
+              )}
+              {loading && (
+                <LoadingButton
+                  loading
+                  loadingPosition="start"
+                  startIcon={<SaveIcon />}
+                  variant="outlined"
+                  size="small"
+                >
+                  Saving
+                </LoadingButton>
+              )}
             </div>
           </Grid>
         </Grid>
@@ -369,6 +389,7 @@ class PaymentDialog extends Component {
 const mapStateToProps = (state) => {
   return {
     tenants: state.firestore.ordered.tenants,
+    payment: state.payment,
   };
 };
 

@@ -17,7 +17,7 @@ import Cookies from "js-cookie";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import DialogComponent from "./DialogComponent";
 
-const pages = ["Add Payment", "Add Tenant"];
+const pages = [ "Add Tenant"];
 const settings = ["Logout"];
 
 class Navbar extends React.Component {
@@ -42,7 +42,7 @@ class Navbar extends React.Component {
   };
 
   handleNavMenuClick = (type) => {
-    const isPayment = pages[0] === type ? "payment" : "tenant";
+    const isPayment = pages[0] === type ? "tenant" : "payment";
     this.handleCloseNavMenu();
     this.props.handleDialogState(isPayment, true);
   };

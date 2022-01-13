@@ -71,7 +71,7 @@ const styles = (theme) => ({
     height: 140,
   },
   fabButton: {
-    position: "absolute",
+    position: "fixed",
     zIndex: 1,
     right: 20,
     bottom: 20,
@@ -115,12 +115,6 @@ class Home extends Component {
       return;
     }
     this.props.resetState();
-  };
-
-  handleAlertCloseForPayment = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
     this.props.resetPaymentState();
   };
 
@@ -144,10 +138,10 @@ class Home extends Component {
       classes,
       userid,
       tenants,
-      hasError,
-      hasPaymentError,
+      tenantsReducer,
       dialogState,
       handleDialogState,
+      payment,
     } = this.props;
     const {
       openDialog,
@@ -188,7 +182,7 @@ class Home extends Component {
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={12} lg={12}>
                         <div className={classes.titleWithBtn}>
-                          <Typography variant="h6">Current Tenants:</Typography>                          
+                          <Typography variant="h6">Current Tenants:</Typography>
                         </div>
                       </Grid>
 
@@ -232,10 +226,17 @@ class Home extends Component {
               <footer>
                 <Copyright />
               </footer>
-
-              {!hasError ? (
+              <Fab
+                color="secondary"
+                aria-label="add"
+                className={classes.fabButton}
+                onClick={() => this.props.handleDialogState("payment", true)}
+              >
+                <AddIcon />
+              </Fab>
+              {tenantsReducer.success && (
                 <Snackbar
-                  open={!hasError}
+                  open={tenantsReducer.success}
                   autoHideDuration={2000}
                   onClose={this.handleAlertClose}
                   style={{ marginBottom: "32px" }}
@@ -244,10 +245,10 @@ class Home extends Component {
                     Tenant added successfully!
                   </Alert>
                 </Snackbar>
-              ) : null}
-              {!hasPaymentError ? (
+              )}
+              {payment.success && (
                 <Snackbar
-                  open={!hasPaymentError}
+                  open={payment.success}
                   autoHideDuration={2000}
                   onClose={this.handleAlertClose}
                   style={{ marginBottom: "32px" }}
@@ -256,7 +257,7 @@ class Home extends Component {
                     Payment added successfully!
                   </Alert>
                 </Snackbar>
-              ) : null}
+              )}
             </Container>
           </main>
         )}
@@ -268,8 +269,8 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     tenants: state.firestore.ordered.tenants,
-    hasError: state.tenants.error,
-    hasPaymentError: state.payment.error,
+    tenantsReducer: state.tenants,
+    payment: state.payment,
   };
 };
 
