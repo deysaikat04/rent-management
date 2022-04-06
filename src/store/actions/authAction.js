@@ -38,7 +38,41 @@ export const addUser = ({ googleId, name, email }) => {
   };
 };
 
-
 export const signIn = (userId) => {
   return { type: "USER_SIGNIN", payload: userId };
+};
+
+export const logIn = (credentials) => {
+  return (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase();
+
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(credentials.email, credentials.password)
+      .then((resp) => {
+        console.log("Success");
+        dispatch({ type: "USER_LOGIN", payload: resp.user.uid });
+      })
+      .catch((error) => {
+        console.log("Login error", error);
+        dispatch({ type: "USER_LOGIN_ERROR", error });
+      });
+  };
+};
+
+export const logOut = () => {
+  return (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase();
+
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        dispatch({ type: "USER_LOGOUT" });
+      })
+      .catch((error) => {
+        console.log("Login error", error);
+        dispatch({ type: "USER_LOGIN_ERROR", error });
+      });
+  };
 };

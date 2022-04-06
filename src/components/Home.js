@@ -9,18 +9,15 @@ import Paper from "@material-ui/core/Paper";
 import Link from "@material-ui/core/Link";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import DialogComponent from "./DialogComponent";
 import TenantDashboard from "./TenantDashboard";
 import TenantCard from "./TenantCard";
 import { resetState } from "../store/actions/tenantAction";
 import { resetPaymentState } from "../store/actions/paymentActions";
-import Bar from "./Navbar";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;

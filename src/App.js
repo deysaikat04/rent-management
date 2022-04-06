@@ -5,7 +5,6 @@ import { ThemeProvider } from "@material-ui/core";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Cookies from "js-cookie";
-import Navbar from "./components/Navbar";
 import TenantDashboard from "./components/TenantDashboard";
 import Bar from "./components/Navbar";
 

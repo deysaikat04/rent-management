@@ -16,6 +16,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Cookies from "js-cookie";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import DialogComponent from "./DialogComponent";
+import { logOut } from "../store/actions/authAction";
+import { connect } from "react-redux";
 
 const pages = [ "Add Tenant"];
 const settings = ["Logout"];
@@ -53,6 +55,7 @@ class Navbar extends React.Component {
   };
 
   handleLogout = () => {
+    this.props.logOut();
     Cookies.remove("userid", { path: "/" });
     window.location.reload();
   };
@@ -178,4 +181,13 @@ class Navbar extends React.Component {
     );
   }
 }
-export default withStyles(null, { withTheme: true })(Navbar);
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logOut: () => dispatch(logOut()),
+  };
+};
+
+export default withStyles(null, { withTheme: true })(
+  connect(null, mapDispatchToProps)(Navbar)
+);
