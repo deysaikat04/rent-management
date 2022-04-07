@@ -123,30 +123,17 @@ class AddTenant extends Component {
   handleDateChange = (event) => {
     const { name, value } = event.target;
     let ipDate = new Date(value).setHours(0, 0, 0, 0);
-    const today = new Date().setHours(0, 0, 0, 0);
-    if (ipDate < today) {
-      this.setState({
-        formError: {
-          ...this.state.formError,
-          fromDate: true,
-        },
-        form: {
-          ...this.state.form,
-          [name]: "",
-        },
-      });
-    } else {
-      this.setState({
-        formError: {
-          ...this.state.formError,
-          fromDate: false,
-        },
-        form: {
-          ...this.state.form,
-          [name]: value,
-        },
-      });
-    }
+    const today = new Date().setHours(0, 0, 0, 0);    
+    this.setState({
+      formError: {
+        ...this.state.formError,
+        fromDate: false,
+      },
+      form: {
+        ...this.state.form,
+        [name]: value,
+      },
+    });
   };
 
   handleTenureChange = (event) => {

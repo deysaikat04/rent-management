@@ -124,6 +124,13 @@ class PaymentDialog extends Component {
       this.setState({
         form: { ...this.state.form, [name]: value, rentAmount: rentAmnt },
       });
+    } else {
+      this.setState({
+        form: {
+          ...this.state.form,
+          [name]: value,
+        },
+      });
     }
   };
 

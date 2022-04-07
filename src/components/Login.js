@@ -10,6 +10,7 @@ import { GoogleLogin } from "react-google-login";
 import { connect } from "react-redux";
 import { addUser, signIn, logIn } from "../store/actions/authAction";
 import TextField from "@mui/material/TextField";
+import Cookies from "js-cookie";
 import Button from "@mui/material/Button";
 
 const styles = (theme) => ({
@@ -71,20 +72,21 @@ class Login extends Component {
     },
     email: "",
     password: "",
+    showForm: false,
   };
 
   responseGoogle = (response) => {
     this.setState({ loading: true });
     try {
-      if(response.profileObj) {
+      if (response.profileObj) {
         const { googleId, name, email } = response.profileObj;
         const { expires_at } = response.tokenObj;
         document.cookie =
-        "userid=" +
-        googleId +
-        ";expires=" +
-        new Date(expires_at).toUTCString() +
-        ";path=/";
+          "userid=" +
+          googleId +
+          ";expires=" +
+          new Date(expires_at).toUTCString() +
+          ";path=/";
         const userObj = {
           googleId,
           name,
@@ -96,11 +98,9 @@ class Login extends Component {
           this.setState({ loading: false });
         }, 2500);
       } else {
-        console.log("Else here");
         this.setState({ loading: false });
       }
     } catch (e) {
-      console.log("Here");
       this.setState({ loading: false });
       console.error(e);
     }
@@ -117,11 +117,14 @@ class Login extends Component {
   };
 
   render() {
+    const userid = Cookies.get("userid");
+    const authed = userid !== undefined;
+
     const { classes } = this.props;
     const { userId, error } = this.props.auth;
-    const { loading, email, password } = this.state;
-    console.log(this.props);
-    if (this.props.authed) {
+    const { showForm, loading, email, password } = this.state;
+
+    if (authed) {
       this.setState({ loading: false });
       window.location.pathname = "/dashboard";
     } else
@@ -138,51 +141,55 @@ class Login extends Component {
                 Your rent management application
               </Typography>
             </Box>
-            <Box component="form" style={{ "marginTop": "16px" }}>
-              <Typography component="h1" variant="body2">
-                Log in using Email
-              </Typography>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                variant="standard"
-                onChange={this.handleChange}
-                value={email}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                variant="standard"
-                onChange={this.handleChange}
-                value={password}
-              />
-              {error && <Typography
-                  component="h1"
-                  variant="caption"
-                  style={{ "color": "red" }}
+            {showForm && (
+              <Box component="form" style={{ marginTop: "16px" }}>
+                <Typography component="h1" variant="body2">
+                  Log in using Email
+                </Typography>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  variant="standard"
+                  onChange={this.handleChange}
+                  value={email}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  variant="standard"
+                  onChange={this.handleChange}
+                  value={password}
+                />
+                {error && (
+                  <Typography
+                    component="h1"
+                    variant="caption"
+                    style={{ color: "red" }}
+                  >
+                    Invalid email or password
+                  </Typography>
+                )}
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 3, mb: 2 }}
+                  onClick={this.handleEmailLogin}
                 >
-                  Invalid email or password
-              </Typography>}
-              <Button
-                type="button"
-                fullWidth
-                variant="contained"
-                color="primary"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={this.handleEmailLogin}
-              >
-                Log In
-              </Button>
-            </Box>
+                  Log In
+                </Button>
+              </Box>
+            )}
             {loading && (
               <Box className={classes.loader}>
                 <CircularProgress />
@@ -190,13 +197,15 @@ class Login extends Component {
             )}
             {!loading && (
               <Box className={classes.button}>
-                <Typography
-                  component="h1"
-                  variant="body2"
-                  style={{ "marginBottom": "16px" }}
-                >
-                  - OR -
-                </Typography>
+                {showForm && (
+                  <Typography
+                    component="h1"
+                    variant="body2"
+                    style={{ marginBottom: "16px" }}
+                  >
+                    - OR -
+                  </Typography>
+                )}
                 <GoogleLogin
                   clientId="7001392389-o4koed2ng3b9c1odq1sk78ep3om7bvu0.apps.googleusercontent.com"
                   className={classes.googleButton}

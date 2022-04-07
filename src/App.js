@@ -74,7 +74,7 @@ function App(props) {
             path="/"
             render={(props) => <Redirect to={"/login"} />}
           />
-          <Route exact path="/login" render={(props) => <Login {...props} authed={authed} />} />
+          <Route exact path="/login" render={(props) => <Login {...props} />} />
           <PrivateRoute
             exact
             path="/dashboard"
