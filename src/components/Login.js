@@ -76,25 +76,32 @@ class Login extends Component {
   responseGoogle = (response) => {
     this.setState({ loading: true });
     try {
-      const { googleId, name, email } = response.profileObj;
-      const { expires_at } = response.tokenObj;
-      document.cookie =
+      if(response.profileObj) {
+        const { googleId, name, email } = response.profileObj;
+        const { expires_at } = response.tokenObj;
+        document.cookie =
         "userid=" +
         googleId +
         ";expires=" +
         new Date(expires_at).toUTCString() +
         ";path=/";
-      const userObj = {
-        googleId,
-        name,
-        email,
-      };
-      this.props.addUser(userObj);
-      setTimeout(() => {
-        window.location.pathname = "/dashboard";
+        const userObj = {
+          googleId,
+          name,
+          email,
+        };
+        this.props.addUser(userObj);
+        setTimeout(() => {
+          window.location.pathname = "/dashboard";
+          this.setState({ loading: false });
+        }, 2500);
+      } else {
+        console.log("Else here");
         this.setState({ loading: false });
-      }, 2500);
+      }
     } catch (e) {
+      console.log("Here");
+      this.setState({ loading: false });
       console.error(e);
     }
   };
@@ -113,9 +120,10 @@ class Login extends Component {
     const { classes } = this.props;
     const { userId, error } = this.props.auth;
     const { loading, email, password } = this.state;
-    if (userId) {
-      window.location.pathname = "/dashboard";
+    console.log(this.props);
+    if (this.props.authed) {
       this.setState({ loading: false });
+      window.location.pathname = "/dashboard";
     } else
       return (
         <Container component="main" maxWidth="xs" className={classes.container}>
@@ -130,7 +138,7 @@ class Login extends Component {
                 Your rent management application
               </Typography>
             </Box>
-            <Box component="form" style={{ "margin-top": "16px" }}>
+            <Box component="form" style={{ "marginTop": "16px" }}>
               <Typography component="h1" variant="body2">
                 Log in using Email
               </Typography>
@@ -185,7 +193,7 @@ class Login extends Component {
                 <Typography
                   component="h1"
                   variant="body2"
-                  style={{ "margin-bottom": "16px" }}
+                  style={{ "marginBottom": "16px" }}
                 >
                   - OR -
                 </Typography>

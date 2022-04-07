@@ -15,6 +15,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Cookies from "js-cookie";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PersonIcon from '@mui/icons-material/Person';
 import DialogComponent from "./DialogComponent";
 import { logOut } from "../store/actions/authAction";
 import { connect } from "react-redux";
@@ -142,7 +143,7 @@ class Navbar extends React.Component {
                 <Tooltip title="Open settings">
                   <IconButton onClick={this.handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar alt="John Doe">
-                      <PersonOutlineIcon />
+                      <PersonIcon />
                     </Avatar>
                   </IconButton>
                 </Tooltip>
